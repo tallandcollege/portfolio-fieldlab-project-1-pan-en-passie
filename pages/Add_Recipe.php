@@ -9,9 +9,8 @@
 
 <body>
     <form method="post">
-        <label>Naam recept</label>
-        <input name="NaamRecept"><br><br>
-
+        <label>Naam recept</label><br>
+        <input name="NaamRecept"><br>
         <label>Ingredienten</label><br>
         <ul id="ingredienten">
             <li>
@@ -28,7 +27,6 @@
         </ul>
         <button type="button" onclick="addIngredient()">Add Ingredient</button>
         <br>
-
         <label>Instructies</label>
         <ul id="instruction-list">
             <li>
@@ -83,4 +81,5 @@
     </script>
 
 </body>
+
 </html>
