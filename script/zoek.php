@@ -1,39 +1,37 @@
 <?php
+if (isset($_GET['Term'])) {
+    //$pdo = include(config.php);
 
-//$pdo = include(config.php);
+    $term = isset($_GET['Term']) ? trim($_GET['Term']) : '';
+    if ($term === '') {
+        echo '';
+        exit;
+    }
 
-$term = $_get['term'];
+    $like = "%{$term}%";
+    $stmt = $pdo->prepare("SELECT * FROM Recipe WHERE naam LIKE :term LIMIT 10");
+    $stmt->execute(['term' => $like]);
+    $rows = $stmt->fetchAll();
 
+    if (!$rows) {
+        echo '<div class="leeg">Geen resultaten gevonden</div>';
+        exit;
+    }
+    $fotopad = 'fotos/';
 
-
-$term = isset($_get['term']) ? trim($_get['term']) : '';
-if ($term === '') {
-    echo '';
+    foreach ($rows as $resultaten) {
+        $naam = htmlspecialchars($resultaten['naam'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $ing  = htmlspecialchars($resultaten['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $foto = $resultaten['foto'] ? htmlspecialchars($fotopad . $resultaten['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'fotos/default.png';
+        echo "<div class='kaart' data-naam='{$naam}'>
+                <img src='{$foto}' alt='Foto van {$naam}' onerror=\"this.src='fotos/default.png'\" />
+                <div>
+                  <div class='naam'>{$naam}</div>
+                  <div class='ingredienten'>Ingrediënten: {$ing}</div>
+                </div>
+              </div>";
+    }
     exit;
-}
-
-$like = "%{$term}%";
-$stmt = $pdo->prepare("SELECT * FROM Recipe WHERE naam LIKE :term LIMIT 10");
-$stmt ->execute(['term' => $like]);
-$rows = $stmt->fetchall();
-
-if(!$rows){
-    echo '<div class="leeg">Geen resultaten gevonden</div>';
-    exit;
-}
-$fotopad = 'fotos/';
-
-foreach ($rows as $resultaten) {
-    $naam = htmlspecialchars($resultaten['naam'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $ing  = htmlspecialchars($r['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $foto = $r['foto'] ? htmlspecialchars($fotoPad . $r['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'fotos/default.png';
-    echo "<div class='kaart' data-naam='{$naam}'>
-            <img src='{$foto}' alt='Foto van {$naam}' onerror=\"this.src='fotos/default.png'\" />
-            <div>
-              <div class='naam'>{$naam}</div>
-              <div class='ingredienten'>Ingrediënten: {$ing}</div>
-            </div>
-          </div>";
 }
 ?>
 
@@ -43,11 +41,12 @@ foreach ($rows as $resultaten) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
     <title>Document</title>
 </head>
 
 <body>
-    <input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off" style="width:250px; padding:10px;">
+    <input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
 
     <div id="resultaten" aria-live="polite"> </div>
 
@@ -64,20 +63,23 @@ foreach ($rows as $resultaten) {
 
                 if (term === '') {
                     resultaten.innerHTML = '';
-                    return
+                    resultaten.style.display = 'none';
+                    return;
                 }
 
+                resultaten.style.display = 'block';
+
                 timer = setTimeout(() => {
-                    fetch('zoke.php?term=' + encodeURIComponent(term))
+                    fetch('zoek.php?Term=' + encodeURIComponent(term))
                         .then(resp => {
-                            if (!resp.ok) throw new error('netwerkfout');
+                            if (!resp.ok) throw new Error('netwerkfout');
                             return resp.text();
                         })
                         .then(html => {
-                            resultaten.innerhtml();
+                            resultaten.innerHTML = html;
                         })
                         .catch(er => {
-                            console.error(err);
+                            console.error(er);
                             resultaten.innerHTML = '<div class="leeg">Er is iets misgegaan.</div>';
 
                         });
