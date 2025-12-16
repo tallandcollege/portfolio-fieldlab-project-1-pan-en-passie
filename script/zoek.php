@@ -1,6 +1,6 @@
 <?php
 if (isset($_GET['Term'])) {
-    //$pdo = include(config.php);
+    $pdo = include('config.php');
 
     $term = isset($_GET['Term']) ? trim($_GET['Term']) : '';
     if ($term === '') {
@@ -9,7 +9,7 @@ if (isset($_GET['Term'])) {
     }
 
     $like = "%{$term}%";
-    $stmt = $pdo->prepare("SELECT * FROM Recipe WHERE naam LIKE :term LIMIT 10");
+    $stmt = $pdo->prepare("SELECT r.id, r.Name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM Recipe r LEFT JOIN RecipeIngredient ri ON r.id = ri.`Recipe_id` LEFT JOIN Ingredient i ON ri.`Ingredient_id` = i.id WHERE r.Name LIKE :term GROUP BY r.id LIMIT 10");
     $stmt->execute(['term' => $like]);
     $rows = $stmt->fetchAll();
 
@@ -24,7 +24,7 @@ if (isset($_GET['Term'])) {
         $ing  = htmlspecialchars($resultaten['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $foto = $resultaten['foto'] ? htmlspecialchars($fotopad . $resultaten['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'fotos/default.png';
         echo "<div class='kaart' data-naam='{$naam}'>
-                <img src='{$foto}' alt='Foto van {$naam}' onerror=\"this.src='fotos/default.png'\" />
+                <img src='{$foto}' alt='Foto van {$naam}'/>
                 <div>
                   <div class='naam'>{$naam}</div>
                   <div class='ingredienten'>Ingrediënten: {$ing}</div>

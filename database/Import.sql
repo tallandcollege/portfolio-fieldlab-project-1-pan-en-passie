@@ -72,3 +72,5 @@ CREATE TABLE IF NOT EXISTS RecipeIngredient (
 
     PRIMARY KEY (`Recipe.id`, `Ingredient.id`)
 );
+
+
