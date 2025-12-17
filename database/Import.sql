@@ -1,3 +1,4 @@
+@ -1,76 +0,0 @@
 CREATE DATABASE IF NOT EXISTS pan_en_passie;
 USE pan_en_passie;
 
@@ -72,5 +73,4 @@ CREATE TABLE IF NOT EXISTS RecipeIngredient (
 
     PRIMARY KEY (`Recipe.id`, `Ingredient.id`)
 );
-
 
