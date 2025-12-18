@@ -1,3 +1,18 @@
+/* Algemene CSS */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* colorpalette */
+:root {
+    --Background: #F5F3EE;
+    --UI: #5AAA95;
+    --Talland-groen: #00373D;
+}
+
 /*zoekbar css*/
 
 #zoekvak {
@@ -43,4 +58,45 @@
 .leeg {
     color: #888;
     padding: 8px;
+}
+
+/* registratie */
+body {
+    background-color: var(--Background);
+}
+
+/* Registratie container */
+.registratie {
+    background-color: #ffffff;
+    border-radius: 24px;
+    /* ronde boven- en onderkant */
+    max-width: 420px;
+    width: 100%;
+    border-top: 6px solid var(--UI);
+    border-bottom: 6px solid var(--UI);
+}
+
+/* Titel */
+.registratie h1 {
+    color: var(--Talland-groen);
+    font-weight: 600;
+}
+
+/* Knoppen */
+.btn-success {
+    background-color: var(--UI);
+    border-color: var(--UI);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--Talland-groen);
+    border-color: var(--Talland-groen);
+}
+
+/* Input focus */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--UI);
+    box-shadow: 0 0 0 0.2rem rgba(90, 170, 149, 0.25);
 }

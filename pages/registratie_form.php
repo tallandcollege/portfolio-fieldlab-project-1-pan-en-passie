@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login – Pen en Passie</title>
+    <title>Registratie – Pen en Passie</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -22,9 +21,9 @@
 <body>
 
     <main class="container-fluid d-flex justify-content-center align-items-center vh-100">
-        <section class="login p-4 shadow rounded" aria-labelledby="login-title">
+        <section class="registratie p-4 shadow rounded" aria-labelledby="registratie-title">
 
-            <h1 id="login-title" class="mb-4 text-center">Login</h1>
+            <h1 id="registratie-title" class="mb-4 text-center">Registreren</h1>
 
             <?php
             session_start();
@@ -35,29 +34,42 @@
             }
             ?>
 
-            <form method="POST" action="../script/loginsystem.php" novalidate>
+            <form method="POST" action="../script/registratie.php" novalidate>
+
+                <!-- Voornaam -->
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">Voornaam</label>
+                    <input id="firstname" name="firstname" class="form-control" required>
+                </div>
+
+                <!-- Achternaam -->
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">Achternaam</label>
+                    <input id="lastname" name="lastname" class="form-control" required>
+                </div>
 
                 <!-- Gebruikersnaam -->
                 <div class="mb-3">
-                    <label for="username" class="form-label">
-                        Gebruikersnaam
-                    </label>
-                    <input id="username" name="username" class="form-control" requiredaria-required="true" autocomplete="username">
+                    <label for="username" class="form-label">Gebruikersnaam</label>
+                    <input id="username" name="username" class="form-control" required autocomplete="username">
+                </div>
+
+                <!-- E-mail -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input id="email" type="email" name="email" class="form-control" required autocomplete="email">
                 </div>
 
                 <!-- Wachtwoord -->
                 <div class="mb-3">
-                    <label for="password" class="form-label">
-                        Wachtwoord
-                    </label>
+                    <label for="password" class="form-label">Tijdelijk wachtwoord</label>
 
                     <div class="input-group">
                         <input type="password" id="password"
                             name="password"
                             class="form-control"
                             required
-                            aria-required="true"
-                            autocomplete="current-password">
+                            aria-required="true">
 
                         <button
                             type="button"
@@ -70,8 +82,16 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">
-                    Inloggen
+                <!-- Rol -->
+                <div class="mb-3">
+                    <label for="role_id" class="form-label">Rol</label>
+                    <select id="role_id" name="role_id" class="form-select" required>
+                        <option value="2">Docent</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">
+                    Gebruiker aanmaken
                 </button>
 
             </form>
