@@ -13,11 +13,9 @@ include "../includes/connect.php";
 <body>
     <form method="post">
         <label>Naam recept</label><br>
-        <input name="name" required><br>
-
+        <input name="NaamRecept"><br>
         <label>Beschrijving</label><br>
-        <textarea name="description" rows="5" cols="30"></textarea><br><br>
-
+        <textarea id="beschrijving" name="notes" rows="5" cols="30"></textarea><br><br>
         <label>Ingredienten</label><br>
         <ul id="ingredienten">
             <li>
