@@ -7,12 +7,45 @@
 }
 
 /* colorpalette */
-:root {
-    --Background: #F5F3EE;
-    --UI: #5AAA95;
-    --Talland-groen: #00373D;
-}
-
+        :root {
+            --Background: #F5F3EE;
+            --UI: #5AAA95;
+            --Talland-groen: #00373D;
+        }
+    
+        body {
+            background-color: var(--Background);
+        }
+    
+        .login {
+            background-color: white;
+            border-left: 5px solid var(--UI);
+        }
+    
+        .btn-primary {
+            background-color: var(--UI);
+            border-color: var(--UI);
+        }
+    
+        .btn-primary:hover {
+            background-color: var(--Talland-groen);
+            border-color: var(--Talland-groen);
+        }
+    
+        .form-label {
+            font-weight: 600;
+        }
+    
+        .input-group .form-control:focus {
+            border-color: var(--UI);
+            box-shadow: 0 0 0 0.2rem rgba(90, 170, 149, 0.25);
+        }
+    
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+            color: #842029;
+        }
 /*zoekbar css*/
 
 #zoekvak {
