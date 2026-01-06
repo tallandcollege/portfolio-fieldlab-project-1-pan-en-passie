@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <?php include 'includes/header.php'; ?>
+    <?php include("includes/header.php"); ?>
     <section class="title-section">
         <h1>Pan<br>en<br>Passie</h1>
         <a href="index.php">Aan de slag</a>

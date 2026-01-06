@@ -1,17 +1,26 @@
 <?php
 if (isset($_GET['Term'])) {
-    $pdo = include('config.php');
+    $pdo = require_once 'connection.php';
 
-    $term = isset($_GET['Term']) ? trim($_GET['Term']) : '';
+
+    // Optional safety check
+    if (!$pdo instanceof PDO) {
+        echo "Connection failed — \$pdo is not a PDO object!";
+        var_dump($pdo);
+        exit;
+    }
+
+    $term = trim($_GET['Term']);
     if ($term === '') {
         echo '';
         exit;
     }
 
     $like = "%{$term}%";
-    $stmt = $pdo->prepare("SELECT r.id, r.Name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM Recipe r LEFT JOIN RecipeIngredient ri ON r.id = ri.`Recipe_id` LEFT JOIN Ingredient i ON ri.`Ingredient_id` = i.id WHERE r.Name LIKE :term GROUP BY r.id LIMIT 10");
+    $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM recipe r LEFT JOIN RecipeIngredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
     $stmt->execute(['term' => $like]);
     $rows = $stmt->fetchAll();
+
 
     if (!$rows) {
         echo '<div class="leeg">Geen resultaten gevonden</div>';
@@ -36,55 +45,56 @@ if (isset($_GET['Term'])) {
 ?>
 
 </html>
-    <input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
+<input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
 
-    <div id="resultaten" aria-live="polite"> </div>
+<div id="resultaten" aria-live="polite"> </div>
 
-    <script>
-        (function() {
-            const zoekvak = document.getElementById('zoekvak');
-            const resultaten = document.getElementById('resultaten');
-            let timer = null;
+<script>
+    (function() {
+        const zoekvak = document.getElementById('zoekvak');
+        const resultaten = document.getElementById('resultaten');
+        let timer = null;
 
-            zoekvak.addEventListener('input', function() {
-                const term = this.value.trim();
+        zoekvak.addEventListener('input', function() {
+            const term = this.value.trim();
 
-                if (timer) clearTimeout(timer);
+            if (timer) clearTimeout(timer);
 
-                if (term === '') {
-                    resultaten.innerHTML = '';
-                    resultaten.style.display = 'none';
-                    return;
-                }
+            if (term === '') {
+                resultaten.innerHTML = '';
+                resultaten.style.display = 'none';
+                return;
+            }
 
-                resultaten.style.display = 'block';
+            resultaten.style.display = 'block';
 
-                timer = setTimeout(() => {
-                    fetch('zoek.php?Term=' + encodeURIComponent(term))
-                        .then(resp => {
-                            if (!resp.ok) throw new Error('netwerkfout');
-                            return resp.text();
-                        })
-                        .then(html => {
-                            resultaten.innerHTML = html;
-                        })
-                        .catch(er => {
-                            console.error(er);
-                            resultaten.innerHTML = '<div class="leeg">Er is iets misgegaan.</div>';
+            timer = setTimeout(() => {
+                fetch('index.php?Term=' + encodeURIComponent(term))
+                    .then(resp => {
+                        if (!resp.ok) throw new Error('netwerkfout');
+                        return resp.text();
+                    })
+                    .then(html => {
+                        resultaten.innerHTML = html;
+                    })
+                    .catch(er => {
+                        console.error(er);
+                        resultaten.innerHTML = '<div class="leeg">Er is iets misgegaan.</div>';
 
-                        });
-                }, 250);
-            });
+                    });
+            }, 250);
+        });
 
-            resultaten.addEventListener('click', function(e) {
-                let kaart = e.target.closest('.kaart');
-                if (kaart) {
-                    const naam = kaart.dataset.naam || '';
-                    zoekvak.value = naam;
-                    resultaten.innerHTML = '';
-                }
-            });
+        resultaten.addEventListener('click', function(e) {
+            let kaart = e.target.closest('.kaart');
+            if (kaart) {
+                const naam = kaart.dataset.naam || '';
+                zoekvak.value = naam;
+                resultaten.innerHTML = '';
+            }
+        });
 
-        })();
-    </script>
+    })();
+</script>
+
 </html>
