@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-function connect() {
+function connect()
+{
     $host = 'localhost';
     $dbname = 'pan_en_passie';
     $username = 'bit_academy';
@@ -19,4 +20,3 @@ function connect() {
         die("Connection failed: " . $e->getMessage());
     }
 }
-?>
