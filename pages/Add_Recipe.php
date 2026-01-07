@@ -30,6 +30,18 @@ include "../includes/connect.php";
 
                 </select>
                 <input name="ingredient_amount[]" type="number">
+                <select name="ingredient_type[]">
+                    <option value="hoofdingredient">hoofdingredient</option>
+                    <option value="kruid">kruid</option>
+                    <option value="specerij">specerij</option>
+                    <option value="naar smaak">naar smaak</option>
+                    <option value="olie">olie</option>
+                    <option value="zuur">zuur</option>
+                    <option value="groente">groente</option>
+                    <option value="smaakmaker">smaakmaker</option>
+                     <option value="gehakt">gehakt</option>
+                </select>
+
             </li>
         </ul>
 
@@ -96,14 +108,17 @@ include "../includes/connect.php";
         $instructions = json_encode($_POST['instruction']);
         $createdat = date('Y-m-d H:i:s');
 
-        $query = "INSERT INTO recipe (name, description, instructions, createdat)
+        $queryr = "INSERT INTO recipe (name, description, instructions, createdat)
               VALUES (:name, :description, :instructions, :createdat)";
 
-        $stmt = $conn->prepare($query);
+        $stmt = $conn->prepare($queryr);
         $stmt->bindParam(':name', $_POST['name']);
         $stmt->bindParam(':description', $_POST['description']);
         $stmt->bindParam(':instructions', $instructions);
         $stmt->bindParam(':createdat', $createdat);
+
+        $queryr = "INSERT INTO ingredient (name, category)
+              VALUES (:name, :category)";
 
         try {
             $stmt->execute();
