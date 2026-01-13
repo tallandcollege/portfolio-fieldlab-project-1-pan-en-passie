@@ -449,4 +449,14 @@ INSERT INTO Aanvulling (Recipe_id, description) VALUES (12, 'Niet te lang mengen
 INSERT INTO Aanvulling (Recipe_id, description) VALUES (3, 'Denk erom dat ze niet aanbranden.');
 INSERT INTO Aanvulling (Recipe_id, description) VALUES (2, 'Probeer de olie bovenop de bestanddelen te krijgen.');
 
+
+INSERT INTO role (name) VALUES
+('student'),
+('docent'),
+('admin');
+
+INSERT INTO users 
+            (firstname, lastname, username, email, passwordhash, role_id)
+            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 2);
+
 COMMIT;

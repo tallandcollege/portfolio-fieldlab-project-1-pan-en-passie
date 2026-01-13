@@ -1,6 +1,6 @@
 <?php
 session_start();
-$pdo = include('config.php');
+$pdo = include('connection.php');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -31,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Doorsturen op basis van rol
             switch ($user['role']) {
                 case 'admin':
-                    header("Location: homapage.php");
+                    header("Location: ../index.php");
                     break;
                 case 'teacher':
-                    header("Location: homepage.php");
+                    header("Location: ../index.php");
                     break;
                 default:
-                    header("Location: hoempage.php");
+                    header("Location: ../index.php");
             }
             exit;
         } else {

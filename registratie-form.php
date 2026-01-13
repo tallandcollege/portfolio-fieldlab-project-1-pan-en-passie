@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -19,14 +20,13 @@
 </head>
 
 <body>
-
+    <?php include("Includes/header.php"); ?>
     <main class="container-fluid d-flex justify-content-center align-items-center vh-100">
-        <section class="registratie p-4 shadow rounded" aria-labelledby="registratie-title">
+        <section class="registratie p-3 shadow rounded" style="max-width: 50vw;" aria-labelledby="registratie-title">
 
-            <h1 id="registratie-title" class="mb-4 text-center">Registreren</h1>
-
+            <h1 id="registratie-title" class="mb-4 text-center">Account registreren voor een gebruiker</h1>
+            <p class="mb-4 text-center">Registreer hier een andere gebruiker, na het klikken op "Gebruiker aanmaken" krijg je een link die je naar de gebruiker kan sturen waar ze hun eigen wachtwoord kunnen aanmaken. </p>
             <?php
-            session_start();
             if (isset($_GET['error'])) {
                 echo '<div class="alert alert-danger" role="alert">'
                     . htmlspecialchars($_GET['error']) .
@@ -34,7 +34,7 @@
             }
             ?>
 
-            <form method="POST" action="script/registratie.php" novalidate>
+            <form method="POST" action="registratie.php" novalidate>
 
                 <!-- Voornaam -->
                 <div class="mb-3">
@@ -114,7 +114,7 @@
             icon.classList.toggle('bi-eye-slash');
         });
     </script>
-
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 </html>
