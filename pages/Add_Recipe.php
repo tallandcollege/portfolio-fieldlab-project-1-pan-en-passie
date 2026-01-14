@@ -1,88 +1,204 @@
 <?php
 include "../includes/connect.php";
+
 $conn = connect();
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $query = "INSERT INTO recipe 
-        (namerecipe, recipe_description, instructions, createdat)
-        VALUES (:name, :desc, :inst, :created)";
+    try {
+        $conn->beginTransaction();
 
-    $stmt = $conn->prepare($query);
+        /* ==========================
+           RECEPT OPSLAAN
+        ========================== */
+        $queryRecipe = "
+            INSERT INTO recipe 
+            (namerecipe, recipe_description, instructions, createdat)
+            VALUES (:name, :description, :instructions, :createdat)
+        ";
 
-    $stmt->execute([
-        ':name'    => $_POST['namerecipe'],
-        ':desc'    => $_POST['recipe_description'],
-        ':inst'    => json_encode($_POST['instruction']),
-        ':created' => date('Y-m-d H:i:s')
-    ]);
+        $stmtRecipe = $conn->prepare($queryRecipe);
+        $stmtRecipe->execute([
+            ':name'         => $_POST['namerecipe'],
+            ':description'  => $_POST['recipe_description'],
+            ':instructions' => json_encode($_POST['instruction']),
+            ':createdat'    => date('Y-m-d H:i:s')
+        ]);
 
-    echo "<p style='color:green;'>Recept opgeslagen! ID = " . $conn->lastInsertId() . "</p>";
+        $recipeID = $conn->lastInsertId();
+
+        /* ==========================
+           INGREDIENTEN VERWERKEN
+        ========================== */
+        $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
+        $insertIngredientQuery = "INSERT INTO ingredient (name, categoryID) VALUES (:name, :categoryID)";
+        $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
+        $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
+
+        $queryRecipeIngredient = "
+            INSERT INTO recipeingredient
+            (recipe_id, Ingredient_id, Aantal, Eenheid, IngredientRole)
+            VALUES (:recipe_id, :Ingredient_id, :Aantal, :Eenheid, :IngredientRole)
+        ";
+        $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
+
+        foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
+            $ingredientName = trim($ingredientName);
+            if (empty($ingredientName)) continue;
+
+            // Check of ingredient bestaat
+            $stmtCheckIngredient->execute([':name' => $ingredientName]);
+            $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
+
+            if (!$ingredient) {
+                // Voeg ingredient toe
+                $stmtInsertIngredient->execute([
+                    ':name'       => $ingredientName,
+                    ':categoryID' => 18
+                ]);
+                $ingredientID = $conn->lastInsertId();
+            } else {
+                $ingredientID = $ingredient['id'];
+            }
+
+            // Voeg relatie toe in recipeingredient met gekoppelde amount, unit en role
+            $stmtRecipeIngredient->execute([
+                ':recipe_id'      => $recipeID,
+                ':Ingredient_id'  => $ingredientID,
+                ':Aantal'         => $_POST['ingredient_amount'][$index],
+                ':Eenheid'        => $_POST['ingredient_unit'][$index],
+                ':IngredientRole' => $_POST['ingredient_role'][$index]
+            ]);
+        }
+
+        $conn->commit();
+
+        echo "<p style='color:green;'>Recept succesvol opgeslagen! (ID: $recipeID)</p>";
+
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo "<p style='color:red;'>Fout: " . $e->getMessage() . "</p>";
+    }
 }
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>Recept toevoegen</title>
+    <meta charset="UTF-8">
+    <title>Recept toevoegen</title>
 </head>
 <body>
 
-<form method="POST" action="">
+<form method="POST">
+
     <label>Naam recept</label><br>
-    <input name="namerecipe" required><br>
+    <input name="namerecipe" required><br><br>
 
     <label>Beschrijving</label><br>
     <textarea name="recipe_description"></textarea><br><br>
 
-    <label>Ingredienten</label>
+    <label>Ingrediënten</label>
     <ul id="ingredienten">
-        <li>
-            <input name="ingredient_name[]" placeholder="Ingredient">
+        <li class="ingredient-item">
+            <input name="ingredient_name[]" placeholder="Ingrediënt">
             <select name="ingredient_unit[]">
-                <option>Stuks</option>
-                <option>G</option>
-                <option>KG</option>
-                <option>ML</option>
-                <option>L</option>
+                <option value="st">Stuks</option>
+                <option value="el">El</option>
+                <option value="bs">Bosje</option>
+                <option value="g">G</option>
+                <option value="kg">KG</option>
+                <option value="ml">ML</option>
+                <option value="dl">DL</option>
+                <option value="l">L</option>
+                <option value="fles">Fles</option>
             </select>
-            <input name="ingredient_amount[]" type="number">
+            <input name="ingredient_amount[]" type="number" step="any">
+            <select name="ingredient_role[]">
+                <option value="hoofdingredient">Hoofdingrediënt</option>
+                <option value="groente">Groente</option>
+                <option value="gehakt">Gehakt</option>
+                <option value="meel">Meel</option>
+                <option value="kruid">Kruid</option>
+                <option value="azijn">Azijn</option>
+                <option value="hulpmiddel">Hulpmiddel</option>
+                <option value="olie">Olie</option>
+                <option value="specerij">Specerij</option>
+                <option value="naar_smaak">Naar smaak</option>
+                <option value="zuur">Zuur</option>
+            </select>
+            <button type="button" onclick="removeItem(this)">❌</button>
         </li>
     </ul>
 
-    <button type="button" onclick="addIngredient()">Add Ingredient</button>
+    <button type="button" onclick="addIngredient()">Ingrediënt toevoegen</button>
+    <br><br>
 
     <label>Instructies</label>
     <ul id="instruction-list">
-        <li><textarea name="instruction[]"></textarea></li>
+        <li class="instruction-item">
+            <textarea name="instruction[]"></textarea>
+            <button type="button" onclick="removeItem(this)">❌</button>
+        </li>
     </ul>
+    <button type="button" onclick="addInstruction()">Instructie toevoegen</button>
 
-    <button type="button" onclick="addInstruction()">Add Instruction</button>
-
+    <br><br>
     <label>Notities</label><br>
     <textarea name="notes"></textarea><br><br>
 
-    <button type="submit">Confirm</button>
+    <button type="submit">Opslaan</button>
 </form>
 
 <script>
 function addIngredient() {
     const li = document.createElement("li");
+    li.className = "ingredient-item";
     li.innerHTML = `
-        <input name="ingredient_name[]">
+        <input name="ingredient_name[]" placeholder="Ingrediënt">
         <select name="ingredient_unit[]">
-            <option>ML</option><option>L</option><option>G</option><option>KG</option><option>Stuks</option>
+            <option value="st">Stuks</option>
+            <option value="el">El</option>
+            <option value="bs">Bosje</option>
+            <option value="g">G</option>
+            <option value="kg">KG</option>
+            <option value="ml">ML</option>
+            <option value="dl">DL</option>
+            <option value="l">L</option>
+            <option value="fles">Fles</option>
         </select>
-        <input name="ingredient_amount[]" type="number">
+        <input name="ingredient_amount[]" type="number" step="any">
+        <select name="ingredient_role[]">
+            <option value="hoofdingredient">Hoofdingrediënt</option>
+            <option value="groente">Groente</option>
+            <option value="gehakt">Gehakt</option>
+            <option value="meel">Meel</option>
+            <option value="kruid">Kruid</option>
+            <option value="azijn">Azijn</option>
+            <option value="hulpmiddel">Hulpmiddel</option>
+            <option value="olie">Olie</option>
+            <option value="specerij">Specerij</option>
+            <option value="naar_smaak">Naar smaak</option>
+            <option value="zuur">Zuur</option>
+        </select>
+        <button type="button" onclick="removeItem(this)">❌</button>
     `;
     document.getElementById("ingredienten").appendChild(li);
 }
 
 function addInstruction() {
     const li = document.createElement("li");
-    li.innerHTML = `<textarea name="instruction[]"></textarea>`;
+    li.className = "instruction-item";
+    li.innerHTML = `
+        <textarea name="instruction[]"></textarea>
+        <button type="button" onclick="removeItem(this)">❌</button>
+    `;
     document.getElementById("instruction-list").appendChild(li);
+}
+
+function removeItem(button) {
+    button.closest("li").remove();
 }
 </script>
 
