@@ -12,7 +12,7 @@
     <?php include("includes/header.php"); ?>
     <section class="title-section">
         <h1>Pan<br>en<br>Passie</h1>
-        <a href="index.php">Aan de slag</a>
+        <a href="recept_pagina.php">Aan de slag</a>
     </section>
     <section class="info-section">
         <div>

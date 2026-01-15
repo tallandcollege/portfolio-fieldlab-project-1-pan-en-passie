@@ -5,7 +5,7 @@ USE pan_en_passie;
 -- ======================
 -- ROLE
 -- ======================
-CREATE TABLE role (
+CREATE TABLE Role (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255)
@@ -14,7 +14,7 @@ CREATE TABLE role (
 -- ======================
 -- USERS
 -- ======================
-CREATE TABLE users (
+CREATE TABLE Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     firstname VARCHAR(255),
     lastname VARCHAR(255),
@@ -28,7 +28,7 @@ CREATE TABLE users (
 -- ======================
 -- CLASS
 -- ======================
-CREATE TABLE class (
+CREATE TABLE Class (
     id INT AUTO_INCREMENT PRIMARY KEY,
     classname VARCHAR(255),
     description TEXT,
@@ -40,7 +40,7 @@ CREATE TABLE class (
 -- ======================
 -- STUDENT (junction)
 -- ======================
-CREATE TABLE student (
+CREATE TABLE Student (
     user_id INT,
     class_id INT,
     role_id INT,
@@ -53,7 +53,7 @@ CREATE TABLE student (
 -- ======================
 -- RECIPE
 -- ======================
-CREATE TABLE recipe (
+CREATE TABLE Recipe (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NULL,
     class_id INT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE recipe (
 -- ======================
 -- INGREDIENT
 -- ======================
-CREATE TABLE ingredient (
+CREATE TABLE Ingredient (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(255) NOT NULL
@@ -77,7 +77,7 @@ CREATE TABLE ingredient (
 -- ======================
 -- RECIPE INGREDIENT
 -- ======================
-CREATE TABLE recipeingredient (
+CREATE TABLE Recipeingredient (
     Recipe_id INT,
     ingredient_id INT,
     pieces VARCHAR(50),
@@ -94,7 +94,7 @@ TRUNCATE TABLE recipeingredient;
 -- ======================
 -- MATERIAL
 -- ======================
-CREATE TABLE material (
+CREATE TABLE Material (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
@@ -102,7 +102,7 @@ CREATE TABLE material (
 -- ======================
 -- RECIPE MATERIAL
 -- ======================
-CREATE TABLE recipematerial (
+CREATE TABLE Recipematerial (
     Recipe_id INT,
     material_id INT,
     PRIMARY KEY (Recipe_id, material_id),
@@ -115,13 +115,17 @@ TRUNCATE TABLE recipematerial;
 -- ======================
 -- AANVULLING
 -- ======================
-CREATE TABLE aanvulling (
+CREATE TABLE Aanvulling (
     id INT AUTO_INCREMENT PRIMARY KEY,
     Recipe_id INT NOT NULL,
     description TEXT NOT NULL,
     FOREIGN KEY (Recipe_id) REFERENCES recipe(id) ON DELETE CASCADE
 );
 
+CREATE TABLE Foto(
+Id INT NOT NULL,
+
+);
 
 INSERT  INTO Ingredient (Name, Category) VALUES
 ('Kalfs ribeye', 'vlees'),

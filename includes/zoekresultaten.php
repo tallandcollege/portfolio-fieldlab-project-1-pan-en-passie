@@ -29,7 +29,7 @@
         }
 
         $like = "%{$term}%";
-        $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM recipe r LEFT JOIN RecipeIngredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
+        $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM recipe r LEFT JOIN recipeingredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
         $stmt->execute(['term' => $like]);
         $rows = $stmt->fetchAll();
     }
@@ -41,7 +41,7 @@
             echo '<div class="leeg">Geen resultaten gevonden</div>';
             exit;
         }
-        
+
         foreach ($rows as $resultaten) {
             $naam = htmlspecialchars($resultaten['naam'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $ing  = htmlspecialchars($resultaten['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');

@@ -14,11 +14,14 @@
   font-family: Arial, sans-serif;
 }
 
+
 html,
 body {
   height: 100%;
-  overflow-x: hidden;          /* voorkomt horizontale overscroll */
-  overscroll-behavior-y: none; /* stopt bounce/scroll chaining op Y */
+  overflow-x: hidden;
+  /* voorkomt horizontale overscroll */
+  overscroll-behavior-y: none;
+  /* stopt bounce/scroll chaining op Y */
 }
 
 body {
@@ -322,4 +325,125 @@ footer {
 footer p {
   color: white;
   margin: 0;
+}
+
+/* =========================
+   recept.pagina 
+========================= */
+
+.recipe-header {
+  text-align: center;
+  padding: 20px;
+}
+
+.recipe-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.list {
+display: flex;
+  justify-content: space-between;
+  
+}
+.recipe-body {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+}
+
+.left-column {
+  width: 42%;
+  font-size: 0.92rem;
+}
+
+.right-column {
+  width: 58%;
+  font-size: 0.92rem;
+}
+
+.ingredient,
+h2 {
+  font-size: 1.02rem;
+  font-weight: bold;
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #000;
+  color: #333;
+}
+
+.ingredients .ingredients,
+.materials {
+  padding-left: 18px;
+  margin-bottom: 20px;
+}
+
+.ingredients li,
+.materials li {
+  margin-bottom: 4px;
+  color: #555;
+}
+
+.steps {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.steps li {
+  margin-bottom: 8px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Mobiel: stapel kolommen verticaal (onder 480px) */
+@media screen and (max-width: 480px) {
+  .recipe-body {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .left-column,
+  .right-column {
+    width: 100% !important;
+  }
+
+  .recipe-card {
+    margin: 10px;
+    padding: 15px;
+    max-width: none;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .recipe-image {
+    height: 180px;
+  }
+}
+
+/* Tablet: iets meer ruimte (481px - 768px) */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .recipe-card {
+    max-width: 95%;
+    padding: 18px;
+  }
+
+  .left-column {
+    width: 45%;
+  }
+
+  .right-column {
+    width: 55%;
+  }
+}
+
+/* Desktop: huidige layout behouden (769px+) */
+@media screen and (min-width: 769px) {
+  .recipe-card {
+    max-width: 420px;
+  }
 }
