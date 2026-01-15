@@ -362,18 +362,18 @@ footer p {
 }
 
 .admin-section {
-  min-height: 80vh;
+  min-height: auto;
   max-width: 100%;
-  padding: 30px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 40px;
+  margin-bottom: 40px;
 }
 
 .admin-panellist {
   width: 30%;
-  height: 60vh;
+  height: auto;
   border-radius: 10px;
   padding: 20px;
   background-color: var(--UI);
@@ -382,11 +382,135 @@ footer p {
 }
 
 .admin-panellist-content {
-  height: 85%;
-  overflow-y: auto;
+  height: 55vh;
+  overflow-y: scroll;
   background-color: white;
   border-radius: 10px;
   margin: 20px;
+}
+
+.registratie-main {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registratie-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+}
+
+.registratie-section form {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  gap: 10px;
+}
+
+.registratie-section label {
+  display: block;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.registratie-main input, select, textarea {
+  display: block;
+  width: 100%;
+  padding: 8px;
+
+  border: 1px solid #ccc;
+  border-radius: 7px;
+}
+
+.registratie-main input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--Talland-groen);
+  box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
+}
+
+.registratie-submit {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--UI);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.1s;
+}
+
+.registratie-submit:hover {
+  background-color: var(--Talland-groen);
+}
+
+#copyBtn {
+  margin-top: 10px;
+  padding: 5px 30px;
+  background-color: gray;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+
+  transition: 0.1s;
+}
+
+#copyBtn:hover {
+  background-color: var(--Talland-groen);
+}
+
+.registratie-form ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+
+.ok {
+  color: #0a7a2f;
+}
+
+.bad {
+  color: #b00020;
+}
+
+.meter {
+  margin-top: 10px;
+  height: 10px;
+  width: 320px;
+  width: 100%;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #999;
+  transition: width 0.15s ease;
+}
+
+.profile-main {
+  display: flex;
+  min-height: 80vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
 
@@ -399,5 +523,20 @@ footer p {
   .admin-panellist {
     width: 80%;
     padding: 10px 10px 30px 10px;
+  }
+}
+@media screen and (max-width: 419px) {
+  .talland-logo {
+    display: none;
+  }
+  #zoekvak {
+    width: 60%;
+    height: auto;
+  }
+
+  header {
+    height: auto;
+    padding: 10px;
+    gap: 5px;
   }
 }

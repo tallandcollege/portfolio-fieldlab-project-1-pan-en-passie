@@ -122,6 +122,19 @@ CREATE TABLE aanvulling (
     FOREIGN KEY (Recipe_id) REFERENCES recipe(id) ON DELETE CASCADE
 );
 
+-- ======================
+-- NaN Accounts (not assigned to a user)
+-- ======================
+CREATE TABLE nan_account (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
+    username VARCHAR(255) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    UserKey VARCHAR(255) UNIQUE,
+    role_id INT,
+    FOREIGN KEY (role_id) REFERENCES role(id)
+);
 
 INSERT  INTO Ingredient (Name, Category) VALUES
 ('Kalfs ribeye', 'vlees'),
@@ -457,6 +470,6 @@ INSERT INTO role (name) VALUES
 
 INSERT INTO users 
             (firstname, lastname, username, email, passwordhash, role_id)
-            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 2);
+            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 3);
 
 COMMIT;

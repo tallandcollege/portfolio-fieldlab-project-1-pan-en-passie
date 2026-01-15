@@ -1,11 +1,16 @@
-<?php session_start(); ?>
+<?php session_start();
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+        header("Location: index.php");
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Pan en Passie</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -21,7 +26,7 @@
         <article class="admin-panellist">
             <h2>Recent gemaakte gebruikers</h2>
             <div class="admin-panellist-content"></div>
-            <a class="admin-btn" href="registratie-form.php">Registreer een gebruiker!</a>
+            <a class="admin-btn" href="chefToevoegen.php">Registreer een gebruiker!</a>
         </article>
         <article class="admin-panellist">
             <h2>Recent gemaakte recepten</h2>
