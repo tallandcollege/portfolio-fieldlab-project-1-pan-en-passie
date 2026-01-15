@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
 
-        echo "<p style='color:green;'>Recept succesvol opgeslagen! (ID: $recipeID)</p>";
+        echo "<p style='color:green;'>Recept succesvol opgeslagen!</p>";
     } catch (Exception $e) {
         $conn->rollBack();
         echo "<p style='color:red;'>Fout: " . $e->getMessage() . "</p>";
