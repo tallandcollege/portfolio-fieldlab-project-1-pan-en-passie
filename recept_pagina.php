@@ -1,7 +1,11 @@
 <?php
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo "Ongeldig recept ID.";
+    exit;
+} else {
+    $recipeid = (int)$_GET['id'];
+}
 $pdo = require_once('includes/connection.php');
-
-$recipeid = 1;
 
 $stmt = $pdo->prepare("SELECT id, name, description, instructions
     FROM Recipe
@@ -75,11 +79,13 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
                         <li class="list">
-                            <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
-                            <hr>
-                            <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
+                            
+                               <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
                             <hr>
                             <div class="eenheid"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
+                         
+                            <hr>
+                            <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
                         </li>
 
                     <?php endforeach; ?>

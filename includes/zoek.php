@@ -1,7 +1,7 @@
 <input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
 
 <div id="resultaten" aria-live="polite" style="display:none;">
-  <iframe id="zoekresultaten" src="includes/zoekresultaten.php"></iframe>
+  <iframe id="zoekresultaten" src="includes/zoekresultaten.php" sandbox="allow-same-origin allow-scripts allow-top-navigation"></iframe>
 </div>
 
 <script>
