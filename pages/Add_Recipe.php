@@ -138,10 +138,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Recept toevoegen</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
-
+<?php include '../includes/header.php'; ?>
     <form method="POST">
 
         <label>Naam recept</label><br>
@@ -274,7 +275,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             button.closest("li").remove();
         }
     </script>
-
+    <?php include '../includes/footer.php'; ?>
 </body>
 
 </html>
