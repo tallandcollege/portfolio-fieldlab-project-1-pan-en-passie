@@ -122,9 +122,18 @@ CREATE TABLE Aanvulling (
     FOREIGN KEY (Recipe_id) REFERENCES recipe(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Foto(
-Id INT NOT NULL,
-
+-- ======================
+-- NaN Accounts (not assigned to a user)
+-- ======================
+CREATE TABLE nan_account (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
+    username VARCHAR(255) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    UserKey VARCHAR(255) UNIQUE,
+    role_id INT,
+    FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
 INSERT  INTO Ingredient (Name, Category) VALUES
@@ -452,5 +461,15 @@ INSERT INTO Aanvulling (Recipe_id, description) VALUES (14, 'Serveer de parfait 
 INSERT INTO Aanvulling (Recipe_id, description) VALUES (12, 'Niet te lang mengen, anders wordt de puree taai!');
 INSERT INTO Aanvulling (Recipe_id, description) VALUES (3, 'Denk erom dat ze niet aanbranden.');
 INSERT INTO Aanvulling (Recipe_id, description) VALUES (2, 'Probeer de olie bovenop de bestanddelen te krijgen.');
+
+
+INSERT INTO role (name) VALUES
+('student'),
+('docent'),
+('admin');
+
+INSERT INTO users 
+            (firstname, lastname, username, email, passwordhash, role_id)
+            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 3);
 
 COMMIT;
