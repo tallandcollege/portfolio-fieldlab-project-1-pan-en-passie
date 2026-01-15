@@ -5,7 +5,7 @@
     <?php include("zoek.php"); ?>
     <div class="account-buttons">
         <?php
-        if (isset($_SESSION['role']) === 'admin') {
+        if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
             echo '<a class="admin-btn" href="adminpanel.php">Admin</a>';
         }
 
