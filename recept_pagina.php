@@ -76,17 +76,16 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="recipe-body">
             <div class="left-column">
                 <h2>Ingrediënten</h2>
-                <ul class="ingredients">
+                <ul class="ingredients row">
                     <?php foreach ($ingredient as $ing): ?>
-                        <li class="list">
-                            
-                               <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
-                            <hr>
-                            <div class="eenheid"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
-                         
-                            <hr>
-                            <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
-                        </li>
+
+
+                        <div class="aantal recept-collumn border-right"> <?= floatval(htmlspecialchars($ing['Aantal'])) ?></div>
+
+                        <div class="eenheid recept-collumn border-right"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
+
+                        <div class="name recept-collumn"><?= htmlspecialchars($ing['name']) ?></div>
+
 
                     <?php endforeach; ?>
                 </ul>

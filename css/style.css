@@ -28,6 +28,13 @@ body {
   background-color: var(--Background);
 }
 
+.row {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
 /* =========================
    Common UI
 ========================= */
@@ -357,6 +364,16 @@ footer p {
    recept.pagina 
 ========================= */
 
+.recept-collumn {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.border-right {
+  border-right: 1px solid black;
+}
 
 /* =========================
    Admin Panel
@@ -424,10 +441,11 @@ footer p {
 }
 
 .list {
-display: flex;
+  display: flex;
   justify-content: space-between;
-  
+
 }
+
 .recipe-body {
   display: flex;
   gap: 16px;
@@ -538,7 +556,9 @@ h2 {
   text-align: left;
 }
 
-.registratie-main input, select, textarea {
+.registratie-main input,
+select,
+textarea {
   display: block;
   width: 100%;
   padding: 8px;
@@ -547,7 +567,9 @@ h2 {
   border-radius: 7px;
 }
 
-.registratie-main input:focus, select:focus, textarea:focus {
+.registratie-main input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--Talland-groen);
   box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
@@ -637,10 +659,12 @@ h2 {
     padding: 10px 10px 30px 10px;
   }
 }
+
 @media screen and (max-width: 419px) {
   .talland-logo {
     display: none;
   }
+
   #zoekvak {
     width: 60%;
     height: auto;
