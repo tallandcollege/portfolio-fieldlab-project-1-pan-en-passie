@@ -30,8 +30,8 @@ body {
 
 .row {
   content: "";
-  display: table;
   clear: both;
+  display: table;
 }
 
 
@@ -364,15 +364,50 @@ footer p {
    recept.pagina 
 ========================= */
 
-.recept-collumn {
-  float: left;
-  width: 33.33%;
-  padding: 10px;
-  box-sizing: border-box;
+.ingredients {
+  list-style: none;
+  padding: 0;
+  margin-left: 10px;
+  position: relative;
 }
 
-.border-right {
-  border-right: 1px solid black;
+/* DE DOORLOPENDE LIJNEN */
+.ingredients::before,
+.ingredients::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #333;
+}
+
+/* lijn na aantal */
+.ingredients::before {
+  left: 60px;
+}
+
+/* lijn na eenheid */
+.ingredients::after {
+  left: 120px;
+}
+
+/* rijen */
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 60px 60px 1fr;
+  align-items: center;
+  padding: 6px 0;
+}
+
+/* tekst */
+.aantal,
+.eenheid {
+  text-align: center;
+}
+
+.name {
+  padding-left: 12px;
 }
 
 /* =========================

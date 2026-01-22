@@ -15,7 +15,6 @@ $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $steps = explode("\n", $recipe['instructions']);
 
-
 $stmt = $pdo->prepare("
     SELECT 
         i.name, 
@@ -28,7 +27,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$recipeid]);
 $ingredient = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 $stmt = $pdo->prepare("SELECT m.name 
 FROM RecipeMaterial rm 
@@ -45,7 +43,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$recipeid]);
 $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 ?>
 
@@ -66,9 +63,6 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <h1><?= htmlspecialchars($recipe['name']) ?></h1>
             <?php if (!empty($notes)): ?>
                 <div class="recipe-notes">
-                    <?php foreach ($notes as $note): ?>
-                        <p><?= htmlspecialchars($note['description']) ?></p>
-                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -76,19 +70,16 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="recipe-body">
             <div class="left-column">
                 <h2>Ingrediënten</h2>
-                <ul class="ingredients row">
+                <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
-
-
-                        <div class="aantal recept-collumn border-right"> <?= floatval(htmlspecialchars($ing['Aantal'])) ?></div>
-
-                        <div class="eenheid recept-collumn border-right"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
-
-                        <div class="name recept-collumn"><?= htmlspecialchars($ing['name']) ?></div>
-
-
+                        <li class="ingredient-row">
+                            <span class="aantal"><?= floatval($ing['Aantal']) ?></span>
+                            <span class="eenheid"><?= htmlspecialchars($ing['Eenheid']) ?></span>
+                            <span class="name"><?= htmlspecialchars($ing['name']) ?></span>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
+
 
                 <h2>Materialen</h2>
                 <ul class="materials">
@@ -106,13 +97,15 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </ol>
             </div>
-
+            <div class="right-column">
+                <div class="recipe-notes">
+                    <h2>Ingrediënten</h2>
+                    <?php foreach ($notes as $note): ?>
+                        <p><?= htmlspecialchars($note['description']) ?></p>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="recipe-notes">
-        <?php foreach ($notes as $note): ?>
-            <p><?= htmlspecialchars($note['description']) ?></p>
-        <?php endforeach; ?>
     </div>
     <?php include 'includes/footer.php'; ?>
 </body>
