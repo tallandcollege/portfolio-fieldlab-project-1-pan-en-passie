@@ -404,10 +404,12 @@ footer p {
 .aantal,
 .eenheid {
   text-align: center;
+  overflow: hidden;
 }
 
 .name {
   padding-left: 12px;
+  overflow: scroll;
 }
 
 /* =========================
