@@ -395,7 +395,11 @@ footer p {
   border-radius: 10px;
   margin: 20px;
 }
-
+.addRecipe-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 .registratie-main, .addRecipe-main {
   margin-top: 20px;
   margin-bottom: 40px;
@@ -542,8 +546,7 @@ h2 {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 96%;        /* ~2% space on each side on mobile */
-  max-width: 700px;  /* wider on desktop */
+  width: min(96%, 1200px); /* wider on desktop */
   margin: 0 auto;
 }
 
@@ -700,17 +703,33 @@ h2 {
 /* INGREDIENT ROW LAYOUT */
 .ingredient-item {
   display: grid;
-  grid-template-columns: 80px 80px 1fr 40px;
-  gap: 8px;
+  grid-template-columns:
+    120px   /* naar smaak */
+    90px    /* amount */
+    80px    /* unit */
+    1fr     /* naam */
+    40px;   /* X */
+
+  gap: 10px;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
+
+.naarsmaak {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
 
 /* Make inputs fill their grid cell */
 .ingredient-item input,
 .ingredient-item select {
   width: 100%;
 }
+
 
 /* Remove list styling */
 #ingredienten {
@@ -772,31 +791,38 @@ h2 {
   background: #ffe5e5;
 }
 
-.ingredient-item {
-  display: grid;
-  grid-template-columns: 80px 90px 1fr 40px; /* amount | unit | name | X */
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.ingredient-item input,
-.ingredient-item select {
-  width: 100%;
-}
 
 .materiaal-item button:hover,
 .instruction-item button:hover {
   background: #ffe5e5;
 }
 
-@media (max-width: 480px) {
-  .ingredient-item {
-    grid-template-columns: 1fr 1fr 1fr 36px;
-  }
 
   .ingredient-item button {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
+
+
+  .popup-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #333;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    display: none; /* Verberg standaard */
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.popup-message.success {
+    background-color: #4CAF50; /* groen voor succes */
+}
+
+.popup-message.error {
+    background-color: #f44336; /* rood voor fout */
 }
