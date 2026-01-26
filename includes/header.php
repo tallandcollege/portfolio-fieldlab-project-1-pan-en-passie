@@ -1,6 +1,6 @@
 <header>
     <div class="talland-logo">
-        <img src="images\Placeholder Talland logo.png" alt="Talland Logo">
+        <a href="index.php"><img src="images\Placeholder Talland logo.png" alt="Talland Logo"></a>
     </div>
     <?php include("zoek.php"); ?>
     <div class="account-buttons">

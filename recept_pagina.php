@@ -58,55 +58,63 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <?php include("includes/header.php"); ?>
-    <div>
-        <div class="recipe-header">
-            <h1><?= htmlspecialchars($recipe['name']) ?></h1>
-            <?php if (!empty($notes)): ?>
-                <div class="recipe-notes">
+    <main class="recipe-main">
+        <section class="recipe-section">
+            <div>
+                <div class="recipe-header">
+                    <h1><?= htmlspecialchars($recipe['name']) ?></h1>
+                    <?php if (!empty($notes)): ?>
+                        <div class="recipe-notes">
+                            <?php foreach ($notes as $note): ?>
+                                <p><?= htmlspecialchars($note['description']) ?></p>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
-        </div>
-        <br>
-        <div class="recipe-body">
-            <div class="left-column">
-                <h2>Ingrediënten</h2>
-                <ul class="ingredients">
-                    <?php foreach ($ingredient as $ing): ?>
-                        <li class="ingredient-row">
-                            <span class="aantal"><?= floatval($ing['Aantal']) ?></span>
-                            <span class="eenheid"><?= htmlspecialchars($ing['Eenheid']) ?></span>
-                            <span class="name"><?= htmlspecialchars($ing['name']) ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-
-
-                <h2>Materialen</h2>
-                <ul class="materials">
-                    <?php foreach ($material as $mat): ?>
-                        <li><?= htmlspecialchars($mat['name']) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
+        </section>
+        <section class="recipe-section">
             <br>
-            <div class="right-column">
-                <h2>Werkwijze</h2>
-                <ol class="steps">
-                    <?php foreach ($steps as $step): ?>
-                        <li><?= htmlspecialchars($step) ?></li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
-            <div class="right-column">
-                <div class="recipe-notes">
+            <div class="recipe-body">
+                <div class="left-column">
                     <h2>Ingrediënten</h2>
-                    <?php foreach ($notes as $note): ?>
-                        <p><?= htmlspecialchars($note['description']) ?></p>
-                    <?php endforeach; ?>
+                    <ul class="ingredients row">
+                        <?php foreach ($ingredient as $ing): ?>
+
+
+                            <div class="aantal recept-collumn border-right"> <?= floatval(htmlspecialchars($ing['Aantal'])) ?></div>
+
+                            <div class="eenheid recept-collumn border-right"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
+
+                            <div class="name recept-collumn"><?= htmlspecialchars($ing['name']) ?></div>
+
+                            <br class="recept-collumn">
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <h2>Materialen</h2>
+                    <ul class="materials">
+                        <?php foreach ($material as $mat): ?>
+                            <li><?= htmlspecialchars($mat['name']) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
+                <div class="right-column">
+                    <h2>Werkwijze</h2>
+                    <ol class="steps">
+                        <?php foreach ($steps as $step): ?>
+                            <li><?= htmlspecialchars($step) ?></li>
+                        <?php endforeach; ?>
+                    </ol>
+                </div>
+
             </div>
-        </div>
-    </div>
+            <div class="recipe-notes">
+                <?php foreach ($notes as $note): ?>
+                    <p><?= htmlspecialchars($note['description']) ?></p>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </main>
     <?php include 'includes/footer.php'; ?>
 </body>
 

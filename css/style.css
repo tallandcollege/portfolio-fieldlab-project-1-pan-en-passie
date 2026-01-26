@@ -364,22 +364,32 @@ footer p {
    recept.pagina 
 ========================= */
 
-.ingredients {
-  list-style: none;
-  padding: 0;
-  margin-left: 10px;
-  position: relative;
+.recipe-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: auto;
 }
 
-/* DE DOORLOPENDE LIJNEN */
-.ingredients::before,
-.ingredients::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: #333;
+.recipe-section {
+  width: 40vw;
+  height: auto;
+  padding: 20px;
+  display:flex;
+  flex: 0 0 auto;
+  align-items: center;
+  flex-direction: column;
+}
+
+.recept-collumn {
+  float: left;
+  width: 33.33%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 /* lijn na aantal */
@@ -405,6 +415,7 @@ footer p {
 .eenheid {
   text-align: center;
   overflow: hidden;
+  border-right: 1px solid black;
 }
 
 .name {
@@ -412,6 +423,43 @@ footer p {
   overflow: scroll;
 }
 
+.recipe-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+}
+
+.ingredient,
+h2 {
+  font-size: 1.02rem;
+  font-weight: bold;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #000;
+  color: #333;
+}
+
+.ingredients .ingredients,
+.materials {
+  padding-left: 18px;
+  margin-bottom: 20px;
+}
+
+.ingredients li,
+.materials li {
+  margin-bottom: 4px;
+  color: #555;
+}
+
+.steps {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.steps li {
+  color: #555;
+  line-height: 1.4;
+}
 /* =========================
    Admin Panel
 ========================= */
@@ -483,54 +531,7 @@ footer p {
 
 }
 
-.recipe-body {
-  display: flex;
-  gap: 16px;
-  padding: 20px;
-}
 
-.left-column {
-  width: 42%;
-  font-size: 0.92rem;
-}
-
-.right-column {
-  width: 58%;
-  font-size: 0.92rem;
-}
-
-.ingredient,
-h2 {
-  font-size: 1.02rem;
-  font-weight: bold;
-  margin: 16px 0 8px 0;
-  padding-bottom: 4px;
-  border-bottom: 2px solid #000;
-  color: #333;
-}
-
-.ingredients .ingredients,
-.materials {
-  padding-left: 18px;
-  margin-bottom: 20px;
-}
-
-.ingredients li,
-.materials li {
-  margin-bottom: 4px;
-  color: #555;
-}
-
-.steps {
-  padding-left: 20px;
-  margin: 0;
-}
-
-.steps li {
-  margin-bottom: 8px;
-  color: #555;
-  line-height: 1.4;
-}
 
 /* Mobiel: stapel kolommen verticaal (onder 480px) */
 @media screen and (max-width: 480px) {
@@ -556,22 +557,6 @@ h2 {
 
   .recipe-image {
     height: 180px;
-  }
-}
-
-/* Tablet: iets meer ruimte (481px - 768px) */
-@media screen and (min-width: 481px) and (max-width: 768px) {
-  .recipe-card {
-    max-width: 95%;
-    padding: 18px;
-  }
-
-  .left-column {
-    width: 45%;
-  }
-
-  .right-column {
-    width: 55%;
   }
 }
 
@@ -694,6 +679,17 @@ textarea:focus {
   .admin-panellist {
     width: 80%;
     padding: 10px 10px 30px 10px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .recipe-main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recipe-section {
+    width: 100vw;
   }
 }
 
