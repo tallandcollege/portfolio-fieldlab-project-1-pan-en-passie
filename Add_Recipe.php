@@ -1,8 +1,8 @@
 <?php
-include "../includes/connect.php";
 
-$conn = connect();
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$conn = include "includes/connect.php";
+
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -137,88 +137,77 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recept toevoegen</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
+
 <body>
-<?php include '../includes/header.php'; ?>
-    <form method="POST">
+    <?php include("includes/header.php"); ?>
+    <main class="addRecipe-main">
+        <section class="addRecipe-section">
+            <form method="POST">
 
-        <label>Naam recept</label><br>
-        <input name="namerecipe" required><br><br>
+                <label class="form-label">Naam recept</label>
+                <input name="namerecipe" required>
 
-        <label>Beschrijving</label><br>
-        <textarea name="recipe_description"></textarea><br><br>
-        <label>Materialen</label><br>
-        <ul id="materialen-list">
-            <li class="materiaal-item">
-                <input name="materiaal[]" placeholder="Materiaal">
-                <button type="button" onclick="removeItem(this)">❌</button>
-            </li>
-        </ul>
-        <button type="button" onclick="addMateriaal()">Materiaal toevoegen</button>
-        <br><br>
+                <label class="form-label">Beschrijving</label>
+                <textarea name="recipe_description"></textarea>
+                <label class="form-label">Materialen</label>
+                <ul id="materialen-list">
+                    <li class="materiaal-item">
+                        <input name="materiaal[]" placeholder="Materiaal">
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
 
-        <label>Ingrediënten</label><br>
-        <ul id="ingredienten">
-            <li class="ingredient-item">
-                <input name="ingredient_name[]" placeholder="Ingrediënt">
-                <select name="ingredient_unit[]">
-                    <option value="st">Stuks</option>
-                    <option value="tl">Tl</option>
-                    <option value="el">El</option>
-                    <option value="bs">Bosje</option>
-                    <option value="g">G</option>
-                    <option value="kg">KG</option>
-                    <option value="ml">ML</option>
-                    <option value="dl">DL</option>
-                    <option value="l">L</option>
-                    <option value="fles">Fles</option>
-                </select>
-                <input name="ingredient_amount[]" type="number" step="any">
-                <select name="ingredient_role[]">
-                    <option value="hoofdingredient">Hoofdingrediënt</option>
-                    <option value="groente">Groente</option>
-                    <option value="gehakt">Gehakt</option>
-                    <option value="meel">Meel</option>
-                    <option value="kruid">Kruid</option>
-                    <option value="azijn">Azijn</option>
-                    <option value="hulpmiddel">Hulpmiddel</option>
-                    <option value="olie">Olie</option>
-                    <option value="specerij">Specerij</option>
-                    <option value="naar_smaak">Naar smaak</option>
-                    <option value="zuur">Zuur</option>
-                </select>
-                <button type="button" onclick="removeItem(this)">❌</button>
-            </li>
-        </ul>
+                <button type="button" class="recipe-submit" onclick="addMateriaal()">Materiaal toevoegen</button>
 
-        <button type="button" onclick="addIngredient()">Ingrediënt toevoegen</button>
-        <br><br>
 
-        <label>Instructies</label>
-        <ul id="instruction-list">
-            <li class="instruction-item">
-                <textarea name="instruction[]"></textarea>
-                <button type="button" onclick="removeItem(this)">❌</button>
-            </li>
-        </ul>
-        <button type="button" onclick="addInstruction()">Instructie toevoegen</button>
+                <label class="form-label">Ingrediënten</label>
+                <ul id="ingredienten">
+                    <li class="ingredient-item">
+                        <input name="ingredient_amount[]" type="number" step="any">
+                        <select name="ingredient_unit[]">
+                            <option value="st">Stuks</option>
+                            <option value="tl">Tl</option>
+                            <option value="el">El</option>
+                            <option value="bs">Bosje</option>
+                            <option value="g">G</option>
+                            <option value="kg">KG</option>
+                            <option value="ml">ML</option>
+                            <option value="dl">DL</option>
+                            <option value="l">L</option>
+                            <option value="fles">Fles</option>
+                        </select>
+                        <input name="ingredient_name[]" placeholder="Ingrediënt">
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
 
-        <br><br>
-        <label>Notities</label><br>
-        <textarea name="aanvullingen"></textarea><br><br>
+                <button type="button" class="recipe-submit" onclick="addIngredient()">Ingrediënt toevoegen</button>
 
-        <button type="submit">Opslaan</button>
-    </form>
+                <label class="form-label">Instructies</label>
+                <ul id="instruction-list">
+                    <li class="instruction-item">
+                        <textarea name="instruction[]"></textarea>
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
+                <button type="button" class="recipe-submit" onclick="addInstruction()">Instructie toevoegen</button>
+                <label class="form-label">Notities</label>
+                <textarea name="aanvullingen" class="aanvullingen"></textarea>
 
-    <script>
-        function addIngredient() {
-            const li = document.createElement("li");
-            li.className = "ingredient-item";
-            li.innerHTML = `
-        <input name="ingredient_name[]" placeholder="Ingrediënt">
+                <button type="submit" class="recipe-submit">Opslaan</button>
+            </form>
+
+            <script>
+                function addIngredient() {
+                    const li = document.createElement("li");
+                    li.className = "ingredient-item";
+                    li.innerHTML = `
+        <input name="ingredient_amount[]" type="number" step="any">
         <select name="ingredient_unit[]">
             <option value="st">Stuks</option>
             <option value="tl">Tl</option>
@@ -231,51 +220,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <option value="l">L</option>
             <option value="fles">Fles</option>
         </select>
-        <input name="ingredient_amount[]" type="number" step="any">
-        <select name="ingredient_role[]">
-            <option value="hoofdingredient">Hoofdingrediënt</option>
-            <option value="groente">Groente</option>
-            <option value="gehakt">Gehakt</option>
-            <option value="meel">Meel</option>
-            <option value="kruid">Kruid</option>
-            <option value="azijn">Azijn</option>
-            <option value="hulpmiddel">Hulpmiddel</option>
-            <option value="olie">Olie</option>
-            <option value="specerij">Specerij</option>
-            <option value="naar_smaak">Naar smaak</option>
-            <option value="zuur">Zuur</option>
-        </select>
+        <input name="ingredient_name[]" placeholder="Ingrediënt">
         <button type="button" onclick="removeItem(this)">❌</button>
     `;
-            document.getElementById("ingredienten").appendChild(li);
-        }
+                    document.getElementById("ingredienten").appendChild(li);
+                }
 
-        function addInstruction() {
-            const li = document.createElement("li");
-            li.className = "instruction-item";
-            li.innerHTML = `
+                function addInstruction() {
+                    const li = document.createElement("li");
+                    li.className = "instruction-item";
+                    li.innerHTML = `
         <textarea name="instruction[]"></textarea>
         <button type="button" onclick="removeItem(this)">❌</button>
     `;
-            document.getElementById("instruction-list").appendChild(li);
-        }
+                    document.getElementById("instruction-list").appendChild(li);
+                }
 
-        function addMateriaal() {
-            const li = document.createElement("li");
-            li.className = "materiaal-item";
-            li.innerHTML = `
+                function addMateriaal() {
+                    const li = document.createElement("li");
+                    li.className = "materiaal-item";
+                    li.innerHTML = `
         <input name="materiaal[]" placeholder="Materiaal">
         <button type="button" onclick="removeItem(this)">❌</button>
     `;
-            document.getElementById("materialen-list").appendChild(li);
-        }
+                    document.getElementById("materialen-list").appendChild(li);
+                }
 
 
-        function removeItem(button) {
-            button.closest("li").remove();
-        }
-    </script>
-    <?php include '../includes/footer.php'; ?>
+                function removeItem(button) {
+                    button.closest("li").remove();
+
+            
+                }
+            
+            </script>
+
+        </section>
+    </main>
+    <?php include("includes/footer.php"); ?>
 </body>
 
 </html>
