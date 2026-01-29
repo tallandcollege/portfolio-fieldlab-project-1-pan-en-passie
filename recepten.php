@@ -48,6 +48,11 @@ $fotopad = 'fotos/';
                             <input type="hidden" name="id" value="<?= $id ?>">
                             <button type="submit" class="recepten-btn">Wijzigen</button>
                         </form>
+                        <br>
+                        <form method="GET" action="receptwijzigen.php" target="_blank">
+                            <input type="hidden" name="id" value="<?= $id ?>">
+                            <button type="submit" class="danger-btn">Delete</button>
+                        </form>
 
                     </article>
                 <?php endforeach; ?>

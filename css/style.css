@@ -43,6 +43,24 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(90, 170, 149, 0.25);
 }
 
+/* delete button */
+.danger-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 5px 10px;
+  background-color: #ff0000;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.danger-btn:hover,
+.danger-btn:focus {
+  background-color: #b30000;
+  outline: none;
+}
+
 /* Alerts */
 .alert-danger {
   background-color: #f8d7da;
@@ -601,6 +619,8 @@ textarea {
   background-color: #0056b3;
   outline: none;
 }
+
+
 
 
 .recepten-img {

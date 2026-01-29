@@ -179,7 +179,7 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             </section>
             <div class="docent-intro">
-                <button type="submit" class="registratie-submit">Klaar</button>
+                <button type="submit" class="recepten-btn">Klaar</button>
             </div>
         </form>
     </main>
