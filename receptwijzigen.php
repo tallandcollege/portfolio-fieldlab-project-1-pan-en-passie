@@ -127,27 +127,43 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <h2>Ingrediënten</h2>
                     <?php foreach ($ingredienten as $i => $ing): ?>
                         <div class="recpeten-ingredient-lijst">
-                            <input type="hidden" name="ingredienten[<?= $i ?>][oude_ingredient_id]" value="<?= $ing['Ingredient_id'] ?>">
 
-                            <label>Ingrediënt:</label>
-                            <select name="ingredienten[<?= $i ?>][ingredient_id]">
-                                <?php foreach ($alleIngredienten as $ai): ?>
-                                    <option value="<?= $ai['id'] ?>" <?= $ai['id'] == $ing['Ingredient_id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($ai['name'], ENT_QUOTES) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <input type="hidden"
+                                name="ingredienten[<?= $i ?>][oude_ingredient_id]"
+                                value="<?= $ing['Ingredient_id'] ?>">
 
-                            <label>Aantal:</label>
-                            <input type="text" name="ingredienten[<?= $i ?>][aantal]" value="<?= htmlspecialchars($ing['Aantal'], ENT_QUOTES) ?>">
+                            <div class="field">
+                                <label for="ingredient_<?= $i ?>">Ingrediënt</label>
+                                <select id="ingredient_<?= $i ?>"
+                                    name="ingredienten[<?= $i ?>][ingredient_id]">
+                                    <?php foreach ($alleIngredienten as $ai): ?>
+                                        <option value="<?= $ai['id'] ?>"
+                                            <?= $ai['id'] == $ing['Ingredient_id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($ai['name'], ENT_QUOTES) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-                            <label>Eenheid:</label>
-                            <input type="text" name="ingredienten[<?= $i ?>][eenheid]" value="<?= htmlspecialchars($ing['Eenheid'], ENT_QUOTES) ?>">
+                            <div class="field">
+                                <label for="aantal_<?= $i ?>">Aantal</label>
+                                <input id="aantal_<?= $i ?>"
+                                    type="text"
+                                    name="ingredienten[<?= $i ?>][aantal]"
+                                    value="<?= htmlspecialchars($ing['Aantal'], ENT_QUOTES) ?>">
+                            </div>
 
-                            <label>Rol:</label>
-                            <input type="text" name="ingredienten[<?= $i ?>][rol]" value="<?= htmlspecialchars($ing['ingredientrole'], ENT_QUOTES) ?>">
+                            <div class="field">
+                                <label for="eenheid_<?= $i ?>">Eenheid</label>
+                                <input id="eenheid_<?= $i ?>"
+                                    type="text"
+                                    name="ingredienten[<?= $i ?>][eenheid]"
+                                    value="<?= htmlspecialchars($ing['Eenheid'], ENT_QUOTES) ?>">
+                            </div>
+
                         </div>
                     <?php endforeach; ?>
+
                 </article>
                 <article class="recept-panellijst ">
                     <h2>Materialen</h2>
