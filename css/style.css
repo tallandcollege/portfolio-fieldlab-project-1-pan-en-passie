@@ -359,16 +359,18 @@ footer p {
 
 
 /* =========================
-   Admin Panel
+   Admin Panel / doccent panel / studenten panel.
 ========================= */
 
-.admin-intro {
+.admin-intro,
+.docent-intro {
   text-align: center;
   margin: 20px;
   color: var(--Talland-groen);
 }
 
-.admin-section {
+.admin-section,
+.docent-section {
   min-height: auto;
   max-width: 100%;
   display: flex;
@@ -378,7 +380,8 @@ footer p {
   margin-bottom: 40px;
 }
 
-.admin-panellist {
+.admin-panellist,
+.docent-panellist {
   width: 30%;
   height: auto;
   border-radius: 10px;
@@ -388,7 +391,8 @@ footer p {
   text-align: center;
 }
 
-.admin-panellist-content {
+.admin-panellist-content,
+.docent-panellist-content {
   height: 55vh;
   overflow-y: scroll;
   background-color: white;
@@ -424,10 +428,11 @@ footer p {
 }
 
 .list {
-display: flex;
+  display: flex;
   justify-content: space-between;
-  
+
 }
+
 .recipe-body {
   display: flex;
   gap: 16px;
@@ -477,6 +482,189 @@ h2 {
   line-height: 1.4;
 }
 
+.docent-iframe {
+  width: 100%;
+
+  height: 600px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+/* =========================
+   Admin Panel / doccent panel: recepten
+========================= */
+.recept-section {
+  min-height: auto;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.recept-panellijst {
+  width: 87%;
+  height: auto;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: var(--UI);
+  color: white;
+  text-align: center;
+  margin-left: 22px;
+  margin-right: 26px;
+}
+
+.recpeten-ingredient-lijst input,
+select,
+textarea {
+  margin: 10px 0 0 0;
+  width: 100%;
+  min-height: 2em;
+  max-height: 4em;
+  height: 3em;
+  border-radius: 10px;
+
+}
+
+.recpeten-ingredient-lijst select {
+  margin: 10px 0 0 0;
+  width: 100%;
+  min-height: 2em;
+  max-height: 4em;
+  height: 3em;
+  border-radius: 10px;
+}
+
+.recpeten-ingredient-lijst textarea {
+  margin: 10px 0 0 0;
+  width: 100%;
+  min-height: 2em;
+  max-height: 4em;
+  height: 3em;
+  border-radius: 10px;
+}
+
+
+#recepten-wrapper {
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 1rem;
+}
+
+
+#recepten-wrapper main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+
+.recepten-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.recepten-title {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.recepten-subtitle {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.recepten-section {
+  margin-bottom: 0.5rem;
+}
+
+.recepten-ingredients {
+  margin: 0.25rem 0 0;
+}
+
+
+.recepten-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.recepten-btn:hover,
+.recepten-btn:focus {
+  background-color: #0056b3;
+  outline: none;
+}
+
+
+.recepten-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+
+.recepten-no-results {
+  font-style: italic;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .docentpanel {
+    padding: 0.5rem;
+  }
+
+  .docentpanel h1 {
+    font-size: 1.2rem;
+  }
+
+  .docent-iframe {
+    height: 400px;
+
+  }
+
+  .docent-panellist {
+    width: 87%;
+    height: auto;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--UI);
+    color: white;
+    text-align: center;
+    margin-left: 22px;
+
+  }
+
+  .docent-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .recept-section {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .docent-iframe {
+    height: 300px;
+
+  }
+}
+
+
 /* Mobiel: stapel kolommen verticaal (onder 480px) */
 @media screen and (max-width: 480px) {
   .recipe-body {
@@ -504,7 +692,7 @@ h2 {
   }
 }
 
-/* Tablet: iets meer ruimte (481px - 768px) */
+
 @media screen and (min-width: 481px) and (max-width: 768px) {
   .recipe-card {
     max-width: 95%;
@@ -538,7 +726,9 @@ h2 {
   text-align: left;
 }
 
-.registratie-main input, select, textarea {
+.registratie-main input,
+select,
+textarea {
   display: block;
   width: 100%;
   padding: 8px;
@@ -547,7 +737,9 @@ h2 {
   border-radius: 7px;
 }
 
-.registratie-main input:focus, select:focus, textarea:focus {
+.registratie-main input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--Talland-groen);
   box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
@@ -626,6 +818,7 @@ h2 {
 }
 
 
+
 @media screen and (max-width: 1300px) {
   .admin-section {
     flex-direction: column;
@@ -637,10 +830,12 @@ h2 {
     padding: 10px 10px 30px 10px;
   }
 }
+
 @media screen and (max-width: 419px) {
   .talland-logo {
     display: none;
   }
+
   #zoekvak {
     width: 60%;
     height: auto;
