@@ -760,10 +760,7 @@ textarea {
   border-radius: 7px;
 }
 
-.registratie-main input,
-select,
-textarea,
-.addRecipe-main input {
+.registratie-main input, select, textarea,.addRecipe-main input{
   outline: none;
   border-color: var(--Talland-groen);
   box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
