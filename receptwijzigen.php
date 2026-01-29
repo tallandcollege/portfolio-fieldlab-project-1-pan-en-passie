@@ -101,6 +101,7 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Recept Wijzigen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -147,8 +148,8 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="text" name="ingredienten[<?= $i ?>][rol]" value="<?= htmlspecialchars($ing['ingredientrole'], ENT_QUOTES) ?>">
                         </div>
                     <?php endforeach; ?>
-
-
+                </article>
+                <article class="recept-panellijst ">
                     <h2>Materialen</h2>
                     <?php foreach ($materialen as $i => $mat): ?>
                         <div class="material">
@@ -163,7 +164,8 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </select>
                         </div>
                     <?php endforeach; ?>
-
+                </article>
+                <article class="recept-panellijst ">
                     <h2>Notities</h2>
                     <?php foreach ($notities as $i => $note): ?>
                         <div class="note">

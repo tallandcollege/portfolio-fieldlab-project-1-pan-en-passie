@@ -507,7 +507,7 @@ h2 {
 
 .recept-panellijst {
   width: 87%;
-  height: auto;
+  height: fit-content;
   border-radius: 10px;
   padding: 20px;
   background-color: var(--UI);
@@ -517,34 +517,29 @@ h2 {
   margin-right: 26px;
 }
 
-.recpeten-ingredient-lijst input,
+.recept-panellijst input,
 select,
 textarea {
   margin: 10px 0 0 0;
   width: 100%;
-  min-height: 2em;
-  max-height: 4em;
+
   height: 3em;
   border-radius: 10px;
 
 }
 
-.recpeten-ingredient-lijst select {
+.recept-panellijst select {
   margin: 10px 0 0 0;
   width: 100%;
-  min-height: 2em;
-  max-height: 4em;
   height: 3em;
   border-radius: 10px;
 }
 
-.recpeten-ingredient-lijst textarea {
+.recept-panellijst textarea {
   margin: 10px 0 0 0;
   width: 100%;
-  min-height: 2em;
-  max-height: 4em;
-  height: 3em;
-  border-radius: 10px;
+  height: 120px;
+  border-radius: 16px;
 }
 
 
@@ -651,10 +646,7 @@ textarea {
     flex-direction: column;
   }
 
-  .recept-section {
-    display: flex;
-    flex-direction: column;
-  }
+
 }
 
 @media (max-width: 480px) {
@@ -662,10 +654,21 @@ textarea {
     height: 300px;
 
   }
+
+  .recept-section {
+    display: flex;
+    flex-direction: column !important;
+    margin: auto;
+  }
+
+  .recept-section {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+  }
 }
 
 
-/* Mobiel: stapel kolommen verticaal (onder 480px) */
 @media screen and (max-width: 480px) {
   .recipe-body {
     flex-direction: column;
