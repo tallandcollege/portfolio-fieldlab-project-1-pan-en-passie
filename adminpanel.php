@@ -3,6 +3,12 @@
         header("Location: index.php");
         exit;
     }
+
+    if (isset($_GET['klasid'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addStudent'])) {
+
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,11 +29,8 @@
         </p>
     </div>
     <section class="admin-section">
-        <?php include("Includes/AccountZoekWidget.php"); ?>
-        <article class="admin-panellist">
-            <h2>Recent gemaakte recepten</h2>
-            <div class="admin-panellist-content"></div>
-        </article>
+        <?php include("Includes/AccountZoekWidget.php");
+        include("Includes/KlassenWidget.php"); ?>
     </section>
     <?php include("Includes/footer.php"); ?>
 </body>
