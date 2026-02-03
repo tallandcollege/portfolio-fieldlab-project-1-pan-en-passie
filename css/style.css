@@ -826,3 +826,9 @@ h2 {
 .popup-message.error {
     background-color: #f44336; /* rood voor fout */
 }
+
+.Recipe_name{
+  display: grid;
+  grid-template-columns: 75% 25%;
+  gap: 10px;
+}
