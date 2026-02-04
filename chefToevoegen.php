@@ -171,8 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($token === null && empty($errors)) {
         addErrorCode($errors, 'general', 'token_failed');
     }
-    
-    $_SESSION['success'] = "http://st1736424643.splsites.nl/activeerAccount.php?key=" . rawurlencode($token);
+
+    $_SESSION['success'] = "https://localhost/portfolio-fieldlab-project-1-pan-en-passie/activeerAccount.php?key=" . rawurlencode($token);
     header("Location: chefToevoegen.php");
     exit;
 }

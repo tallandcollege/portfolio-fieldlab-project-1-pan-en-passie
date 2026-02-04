@@ -172,10 +172,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main class="addRecipe-main">
         <section class="addRecipe-section">
             <form method="POST">
-
                 <label class="form-label">Naam recept</label>
-                <input name="namerecipe" required>
-
+                <section class="Recipe_name">
+                    <input name="namerecipe" required>
+                    <select>
+                        <option value="Makkelijk">Makkelijk ⭐</option>
+                        <option value="Gemiddeld">Gemiddeld ⭐⭐</option>
+                        <option value="Moeilijk">Moeilijk ⭐⭐⭐</option>
+                    </select>
+                </section>
                 <label class="form-label">Beschrijving</label>
                 <textarea name="recipe_description"></textarea>
 
