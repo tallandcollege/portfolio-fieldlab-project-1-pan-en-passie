@@ -23,11 +23,7 @@
         </p>
     </div>
     <section class="admin-section">
-        <article class="admin-panellist">
-            <h2>Recent gemaakte gebruikers</h2>
-            <div class="admin-panellist-content"></div>
-            <a class="admin-btn" href="chefToevoegen.php">Registreer een gebruiker!</a>
-        </article>
+        <?php include("Includes/AccountZoekWidget.php"); ?>
         <article class="admin-panellist">
             <h2>Recent gemaakte recepten</h2>
             <div class="admin-panellist-content"></div>

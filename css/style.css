@@ -388,18 +388,51 @@ footer p {
   text-align: center;
 }
 
-.admin-panellist-content {
+.admin-panellist-content{
   height: 55vh;
-  overflow-y: scroll;
-  background-color: white;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: white;
+  color: black;
   border-radius: 10px;
   margin: 20px;
 }
-.addRecipe-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+
+.Zoek-Widget-Search {
+  width: 80%;
+  padding: 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--Background);
 }
+
+.User-Search-item{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+
+  flex-wrap: nowrap;
+  width: 1000px;
+  overflow: hidden;
+}
+
+.User-Search-item p{
+  margin: 0;
+  white-space: nowrap;
+}
+
+.User-Search-item p:nth-child(2) {
+  font-weight: bold;
+}
+
+/* checkbox column */
+.User-Search-item input{
+  flex: 0 0 24px;
+}
+
 .registratie-main, .addRecipe-main {
   margin-top: 20px;
   margin-bottom: 40px;
