@@ -176,9 +176,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <section class="Recipe_name">
                     <input name="namerecipe" required>
                     <select>
-                        <option value="Makkelijk">Makkelijk ⭐</option>
-                        <option value="Gemiddeld">Gemiddeld ⭐⭐</option>
-                        <option value="Moeilijk">Moeilijk ⭐⭐⭐</option>
+                        <option value="Beginner">Beginner ⭐</option>
+                        <option value="Makkelijk">Makkelijk ⭐⭐</option>
+                        <option value="Gemiddeld">Gemiddeld ⭐⭐⭐</option>
+                        <option value="Moeilijk">Moeilijk ⭐⭐⭐⭐</option>
+                        <option value="Expert">Expert ⭐⭐⭐⭐⭐</option>
                     </select>
                 </section>
                 <label class="form-label">Beschrijving</label>
