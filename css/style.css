@@ -451,7 +451,14 @@ footer p {
   text-align: center;
   padding: 20px;
 }
-
+.recepten-section{
+  display: flex;
+  gap: 20px;
+  align-items: left;
+  flex-direction: column;
+  text-align: left;
+  padding: 20px;
+}
 .recipe-image {
   width: 100%;
   height: 220px;
@@ -572,7 +579,7 @@ h2 {
 }
 
 
-.addRecipe-section form {
+.addRecipe-section form, .recepten-section {
   display: flex;
   flex-direction: column;
   background-color: rgb(255, 255, 255);

@@ -13,19 +13,24 @@ $pdo = connect();
 </head>
 <body>
     <?php include("includes/header.php"); ?>
+    <section class="recepten-section">
         <?php
         try{
             echo "<tr>";
             $receptenQuery= "SELECT * FROM recipe"; /*Pakt alle recepten uit de table recipe van de database */
             $recepten = $pdo->query($receptenQuery);
-            
+                echo "<table>";
             foreach ($recepten as $rec) {
-                echo $rec['name'];  /*Print alles onder de column "name"*/
+                echo "<tr>";
+                echo "<td>" . "<a href=recept_pagina.php?id=" . $rec['id'] . ">" . $rec['Name'] . "</a>" . "</td>";  /*Print alles onder de column "name"*/
+                echo "</tr>";
             }
+                echo "</table>";
         } catch (PDOException $e) {
             echo "Connection Failed";
         }
         ?>
+    </section>
     <?php include("Includes/footer.php"); ?>
 </body>
 </html>
