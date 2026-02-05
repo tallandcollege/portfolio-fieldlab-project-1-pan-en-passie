@@ -6,16 +6,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $conn->beginTransaction();
-
-        /* ==========================
-           RECEPT OPSLAAN
-        ========================== */
-        $queryRecipe = "
+        /*Maakt de MySQL command klaar om informatie toe te voegen aan 'recipe' */
+        $queryRecipe = "       
             INSERT INTO recipe 
             (Name, Description, Instructions, Createdat)
             VALUES (:name, :description, :instructions, :createdat)
         ";
-
+        /*Pakt de info uit de form en post het in de database */
         $stmtRecipe = $conn->prepare($queryRecipe);
         $stmtRecipe->execute([
             ':name'         => $_POST['namerecipe'],
@@ -26,11 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $recipeID = $conn->lastInsertId();
 
-        /* ==========================
-           MATERIALEN VERWERKEN
-        ========================== */
+        /*Maakt de MySQL command klaar om informatie toe te voegen aan 'recipe' */
         if (!empty($_POST['materiaal'])) {
-            $checkMaterialQuery = "SELECT id FROM material WHERE name = :name LIMIT 1";
+            $checkMaterialQuery = "SELECT id FROM material WHERE name = :name LIMIT 1"; /*Controleert of ingevoerde 'material' al in de database zit */
             $insertMaterialQuery = "INSERT INTO material (name) VALUES (:name)";
             $stmtCheckMaterial  = $conn->prepare($checkMaterialQuery);
             $stmtInsertMaterial = $conn->prepare($insertMaterialQuery);
@@ -44,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $stmtCheckMaterial->execute([':name' => $materiaalName]);
                 $materiaal = $stmtCheckMaterial->fetch(PDO::FETCH_ASSOC);
-
+                /*Voegt materialen toe aan de database als ze er niet al in zitten */
                 if (!$materiaal) {
                     $stmtInsertMaterial->execute([':name' => $materiaalName]);
                     $materiaalID = $conn->lastInsertId();
@@ -59,28 +54,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        /* ==========================
-           INGREDIËNTEN VERWERKEN
-        ========================== */
-        $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
+        /*Maakt de MySQL command klaar om informatie toe te voegen aan 'ingredient' */
+        $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1"; /*Controleert of ingevoerde 'ingredient' al in de database zit */
         $insertIngredientQuery = "INSERT INTO ingredient (name, categoryID) VALUES (:name, :categoryID)";
         $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
         $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
-
+        /*Maakt de MySQL command klaar om informatie toe te voegen aan 'recipeingredient' */
         $queryRecipeIngredient = "
             INSERT INTO recipeingredient
             (recipe_id, Ingredient_id, Aantal, Eenheid, IngredientRole)
             VALUES (:recipe_id, :Ingredient_id, :Aantal, :Eenheid, :IngredientRole)
         ";
         $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
-
+        /*Controleert of ingevoerde ingredient al zit in 'ingredient' */
         foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
             $ingredientName = trim($ingredientName);
             if (empty($ingredientName)) continue;
 
             $stmtCheckIngredient->execute([':name' => $ingredientName]);
             $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
-
+            /*Zo niet, wordt deze opgeslagen als een nieuw ingredient, met categorie 'invullen' */
             if (!$ingredient) {
                 $stmtInsertIngredient->execute([
                     ':name'       => $ingredientName,
@@ -91,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $ingredientID = $ingredient['id'];
             }
 
-            // FIX: Undefined array key probleem
+            /*Controleert of de blok naar smaak is ingeklikt. zo wel dan zal de aantal en eenheid onthouden worden met "naar smaak"*/
             $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
 
             $stmtRecipeIngredient->execute([
@@ -103,14 +96,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ]);
         }
 
-        /* ==========================
-           AANVULLINGEN VERWERKEN
-        ========================== */
+        /*Controleert of aanvullingen leeg is of niet, zo niet wordt deze code uitgevoerd*/
         if (!empty($_POST['aanvullingen'])) {
             $queryAanvulling = "
                 INSERT INTO aanvulling (Recipe_id, description)
                 VALUES (:recipe_id, :description)
-            ";
+            "; /*^Voegt info toe aan de aanvullingen table*/
             $stmtAanvulling = $conn->prepare($queryAanvulling);
             $stmtAanvulling->execute([
                 ':recipe_id'  => $recipeID,
@@ -120,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
 
-        // POPUP SUCCESS
+/*recept successvol opgeslagen WIP*/        
         echo "<script>showPopup('Recept succesvol opgeslagen!', 'success');</script>";
     } catch (Exception $e) {
         $conn->rollBack();
@@ -138,7 +129,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Recept toevoegen</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* POPUP STIJL */
         .popup-message {
             position: fixed;
             top: 50%;
@@ -240,7 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <?php include("includes/footer.php"); ?>
 
     <script>
-        // POPUP FUNCTIE
+        /*WIP*/
         function showPopup(message, type) {
             const popup = document.getElementById('popup-message');
             popup.textContent = message;
@@ -249,7 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             setTimeout(() => popup.style.display = 'none', 3000);
         }
 
-        // DYNAMISCH TOEVOEGEN EN VERWIJDEREN
+        /*Zorgt ervoor dat er meer openingen opkomen om ingredienten toe te voegen aan het recept*/
         function addIngredient() {
             const li = document.createElement("li");
             li.className = "ingredient-item";
@@ -276,7 +266,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("ingredienten").appendChild(li);
         }
-
+        /*Zorgt ervoor dat er meer openingen opkomen om instructies toe te voegen aan het recept*/
         function addInstruction() {
             const li = document.createElement("li");
             li.className = "instruction-item";
@@ -286,7 +276,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("instruction-list").appendChild(li);
         }
-
+        /*Zorgt ervoor dat er meer openingen opkomen om materialen toe te voegen aan het recept*/
         function addMateriaal() {
             const li = document.createElement("li");
             li.className = "materiaal-item";
@@ -296,12 +286,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("materialen-list").appendChild(li);
         }
-
+        /*Verwijdert bijbehorende item*/
         function removeItem(button) {
             button.closest("li").remove();
         }
-
-        // NAAAR SMAAK TOGGLE
+        /*zorgt ervoor dat als naar smaak is aangeklikt, de aantallen blok van je recept leeggaat en niet ingevuld kan worden. je kan weer 
+        een aantal toevoegen als deze is uitgeklikt*/
         function toggleAmount(checkbox) {
             const amountInput = checkbox.closest("li").querySelector('input[name="ingredient_amount[]"]');
             if (checkbox.checked) {
@@ -311,8 +301,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 amountInput.disabled = false;
             }
         }
-
-        // INITIËLE NAAAR SMAAK CHECKBOX
         document.querySelectorAll('input[name="ingredient_naarsmaak[]"]').forEach(cb => {
             cb.addEventListener('change', () => toggleAmount(cb));
         });

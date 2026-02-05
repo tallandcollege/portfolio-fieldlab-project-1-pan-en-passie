@@ -16,11 +16,11 @@ $pdo = connect();
         <?php
         try{
             echo "<tr>";
-            $receptenQuery= "SELECT * FROM recipe";
+            $receptenQuery= "SELECT * FROM recipe"; /*Pakt alle recepten uit de table recipe van de database */
             $recepten = $pdo->query($receptenQuery);
             
             foreach ($recepten as $rec) {
-                echo $rec['name'];
+                echo $rec['name'];  /*Print alles onder de column "name"*/
             }
         } catch (PDOException $e) {
             echo "Connection Failed";
