@@ -405,7 +405,6 @@ footer p {
   border-radius: 10px;
   padding: 20px;
   background-color: var(--UI);
-  color: white;
   display: flex;
   flex-direction: column;
   text-align: center;
