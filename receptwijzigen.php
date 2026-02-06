@@ -21,14 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($_POST['ingredienten'] as $ing) {
             $stmt = $pdo->prepare("
                 UPDATE RecipeIngredient 
-                SET Ingredient_id=?, Aantal=?, Eenheid=?, ingredientrole=? 
+                SET Ingredient_id=?, Aantal=?, Eenheid=?
                 WHERE Recipe_id=? AND Ingredient_id=?
             ");
             $stmt->execute([
                 $ing['ingredient_id'],
                 $ing['aantal'],
                 $ing['eenheid'],
-                $ing['rol'],
                 $receptid,
                 $ing['oude_ingredient_id']
             ]);
@@ -61,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    echo "<p class='ok'>Recept succesvol bijgewerkt!</p>";
+    // echo "<p class='ok'>Recept succesvol bijgewerkt!</p>";
+    header("Location: docentpanel.php?status=ok");
 }
 
 $stmt = $pdo->prepare("SELECT * FROM Recipe WHERE id=?");

@@ -405,7 +405,6 @@ footer p {
   border-radius: 10px;
   padding: 20px;
   background-color: var(--UI);
-  color: white;
   text-align: center;
 }
 
@@ -594,7 +593,9 @@ h2 {
   line-height: 1.5;
   background: #f9f9f9;
   margin: 0;
-  padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+
 }
 
 .recpeten-ingredient-lijst {
@@ -648,6 +649,9 @@ label {
 
 .recepten-section {
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  width: 90%;
 }
 
 .recepten-ingredients {
@@ -708,7 +712,6 @@ label {
     border-radius: 10px;
     padding: 20px;
     background-color: var(--UI);
-    color: white;
     text-align: center;
     margin-left: 22px;
 
