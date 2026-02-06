@@ -22,7 +22,7 @@ $pdo = connect();
                 echo "<table>";
             foreach ($recepten as $rec) {
                 echo "<tr>";
-                echo "<td>" . "<a href=recept_pagina.php?id=" . $rec['id'] . ">" . $rec['Name'] . "</a>" . "</td>";  /*Print alles onder de column "name"*/
+                echo "<td class='receptenstuk'>" . "<h2>" . "<a href=recept_pagina.php?id=" . $rec['id'] . ">" . $rec['Name'] . "</a>" . "</h2>" . "</td>";  /*Print alles onder de column "name"*/
                 echo "</tr>";
             }
                 echo "</table>";

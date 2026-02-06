@@ -872,3 +872,21 @@ h2 {
   grid-template-columns: 75% 25%;
   gap: 10px;
 }
+
+.receptenstuk{
+  padding: 20px;
+}
+
+.receptenstuk a{
+  color:#000;
+  text-decoration: none;
+  padding-bottom: 10px;
+}
+
+.receptenstuk h2{
+  font-size: 1.0rem !important;
+  font-weight: bold;
+  margin: 0px 0 0px 0 !important;
+  border-bottom: 1px solid #000;
+  color: #000 !important;
+}
