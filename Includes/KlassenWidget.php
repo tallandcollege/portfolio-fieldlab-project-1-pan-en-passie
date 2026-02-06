@@ -8,6 +8,14 @@ require_once("Includes/connection.php");
 
 $klassen = [];
 
+function truncateText(string $text, int $maxLen): string
+{
+    if (strlen($text) <= $maxLen) {
+        return $text;
+    }
+    return substr($text, 0, $maxLen - 1) . "…";
+}
+
 // ===== DELETE STUDENTS FROM CLASS =====
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
@@ -18,6 +26,7 @@ if (
 
     // checkbox values
     $userIds = $_POST['delete_users'] ?? [];
+
     if (!is_array($userIds)) $userIds = [];
 
     // alleen geldige ints
@@ -198,7 +207,7 @@ ORDER BY u.lastname, u.firstname;";
                                                 <!-- Als je delete per student wil: geef user_id mee -->
                                                 <input type="checkbox" name="delete_users[]" value="<?= (int)$st['user_id'] ?>">
                                             </td>
-                                            <td><?= htmlspecialchars(($st['lastname'] ?? '') . ', ' . ($st['firstname'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars(truncateText(($st['lastname'] ?? '') . ', ' . ($st['firstname'] ?? ''), 50), ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($st['username'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($st['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                             <td><?= htmlspecialchars($st['role_name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
@@ -228,7 +237,7 @@ ORDER BY u.lastname, u.firstname;";
                     <?php foreach ($klassen as $klas): ?>
                         <a class="admin-list-item" href="adminpanel.php?klasid=<?= (int)$klas['id'] ?>">
                             <div class="admin-list-item-main">
-                                <h3><?= htmlspecialchars($klas['classname'] ?? '', ENT_QUOTES, 'UTF-8') ?></h3>
+                                <h3><?= htmlspecialchars(truncateText($klas['classname'] ?? '', 20), ENT_QUOTES, 'UTF-8') ?></h3>
                             </div>
 
                             <div class="admin-list-item-meta">

@@ -477,6 +477,14 @@ footer p {
   width: 40vw;
 }
 
+.admin-notice {
+  color: red !important;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  width: 100%;
+}
+
 .User-Search-item p{
   margin: 0;
   white-space: nowrap;

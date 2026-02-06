@@ -24,9 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($classname === '') {
         $errors[] = "Klasnaam is verplicht.";
     }
+    if (strlen($classname) > 50) {
+        $errors[] = "Klasnaam mag maximaal 50 karakters zijn.";
+    }
 
-    if ($maxstudents === '' || !ctype_digit($maxstudents) || (int)$maxstudents < 1) {
-        $errors[] = "Max. studenten moet een geheel getal zijn van minimaal 1.";
+    if ($maxstudents === '' || !ctype_digit($maxstudents) || (int)$maxstudents < 1 || (int)$maxstudents > 999) {
+        $errors[] = "Max. studenten moet een geheel getal zijn van minimaal 1 en maximaal 999.";
     }
 
     if (empty($errors)) {
@@ -115,9 +118,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             id="maxstudents"
             name="maxstudents"
             min="1"
+            max="999"
             step="1"
             required
-            placeholder="Bijv. 30"
+            placeholder="24"
+            default="24"
             value="<?php echo htmlspecialchars($maxstudents, ENT_QUOTES, 'UTF-8'); ?>"
         />
     </div>
