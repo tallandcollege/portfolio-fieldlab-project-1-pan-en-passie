@@ -1,5 +1,6 @@
-<input type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
-
+<form method="GET" action="Recepten.php">
+<input name="search" type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
+</form>
 <div id="resultaten" aria-live="polite" style="display:none;">
   <iframe id="zoekresultaten" src="includes/zoekresultaten.php" sandbox="allow-same-origin allow-scripts allow-top-navigation"></iframe>
 </div>
