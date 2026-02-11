@@ -37,6 +37,8 @@ try {
         $stmt->execute([
             ':search' => "%$search%"
         ]);
+        //Checkt of het recept in de database zit
+        if($stmt->rowCount() > 0){
         //print iedere bijpassende recept
         foreach ($stmt as $rec) {
             echo "<tr>";
@@ -51,7 +53,9 @@ try {
             echo "</td>";
             echo "</tr>";
         }
-
+        } else {
+            echo "Geen bijpassende recept gevonden.";
+        }
     } else {
         echo "<tr><td>Geen zoekterm ingevoerd.</td></tr>";
     }
