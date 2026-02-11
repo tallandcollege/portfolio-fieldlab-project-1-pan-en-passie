@@ -25,7 +25,7 @@ try {
     echo "<table>";
 
     if (!empty($search)) {
-
+        //zoekt naar ingevoerde info in name of description
         $receptenQuery = "
             SELECT * 
             FROM recipe 
@@ -37,7 +37,7 @@ try {
         $stmt->execute([
             ':search' => "%$search%"
         ]);
-
+        //print iedere bijpassende recept
         foreach ($stmt as $rec) {
             echo "<tr>";
             echo "<td>";
