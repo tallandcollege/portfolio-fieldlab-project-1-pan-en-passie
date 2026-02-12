@@ -79,11 +79,11 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
                         <li class="list">
-                            
-                               <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
+
+                            <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
                             <hr>
                             <div class="eenheid"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
-                         
+
                             <hr>
                             <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
                         </li>

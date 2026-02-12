@@ -8,6 +8,9 @@
         if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
             echo '<a class="admin-btn" href="adminpanel.php">Admin</a>';
         }
+        if (isset($_SESSION['role']) && $_SESSION['role'] == 'docent') {
+            echo '<a class="admin-btn" href="docentpanel.php">docent</a>';
+        }
 
         if (isset($_SESSION['user_id'])) {
             $profileHref = "profile.php";

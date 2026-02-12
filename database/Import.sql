@@ -62,7 +62,8 @@ CREATE TABLE users (
 
 INSERT INTO users 
             (firstname, lastname, username, email, passwordhash, role_id)
-            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 3);
+            VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 3),
+            ('chef', 'chef', 'chef', 'chef@chef.nl', '$2a$12$7QX67PT0QO1ptSUWaiMJ0u9DRORkQiGK.9aPOmjPyyOYgm4iHK4CS', 2);
 
 -- =====================================================
 -- CATEGORY
