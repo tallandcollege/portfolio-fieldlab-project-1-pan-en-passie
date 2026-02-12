@@ -3,10 +3,16 @@ session_start();
 
 function connect()
 {
+    // $host = 'localhost';
+    // $dbname = 'pan_en_passie';
+    // $username = 'bit_academy';
+    // $password = 'bit_academy';
+    // $charset = 'utf8mb4';
+
     $host = 'localhost';
-    $dbname = 'pan_en_passie';
-    $username = 'bit_academy';
-    $password = 'bit_academy';
+    $dbname = 'st1736424645';
+    $username = 'st1736424645';
+    $password = 'ESibH2t4CMYubiw';
     $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";

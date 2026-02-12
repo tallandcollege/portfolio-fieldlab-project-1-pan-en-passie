@@ -1,13 +1,28 @@
 <?php
-$host = 'localhost';
-$dbname = 'pan_en_passie';
-$username = 'root'; 
-$password = ''; 
+session_start();
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    return $pdo;
-} catch (PDOException $e) {
-    die("Databaseverbinding mislukt: " . $e->getMessage());
+function connect()
+{
+    // $host = 'localhost';
+    // $dbname = 'pan_en_passie';
+    // $username = 'bit_academy';
+    // $password = 'bit_academy';
+    // $charset = 'utf8mb4';
+
+    $host = 'localhost';
+    $dbname = 'st1736424645';
+    $username = 'st1736424645';
+    $password = 'ESibH2t4CMYubiw';
+    $charset = 'utf8mb4';
+
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+
+    try {
+        $pdo = new PDO($dsn, $username, $password);
+        // Set the PDO error mode to exception
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo; // <-- Return the PDO object!
+    } catch (PDOException $e) {
+        die("Connection failed: " . $e->getMessage());
+    }
 }
