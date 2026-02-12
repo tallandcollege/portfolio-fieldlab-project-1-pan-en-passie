@@ -29,8 +29,8 @@ try {
         $receptenQuery = "
             SELECT * 
             FROM recipe 
-            WHERE name LIKE :search 
-            OR description LIKE :search
+            WHERE Name LIKE :search 
+            OR Description LIKE :search
         ";
 
         $stmt = $pdo->prepare($receptenQuery);
@@ -45,9 +45,9 @@ try {
             echo "<td>";
             echo "<div class='receptenstuk'>";
             echo "<a href='recept_pagina.php?id=" . $rec['id'] . "'>";
-            echo "<h2>" . htmlspecialchars($rec['name']) . "</h2>";
-            echo "<div class='receptendetails'>" . htmlspecialchars($rec['description']) . "</div>";
-            echo "<h6 class='receptentijd'>" . $rec['createdat'] . "</h6>";
+            echo "<h2>" . htmlspecialchars($rec['Name']) . "</h2>";
+            echo "<div class='receptendetails'>" . htmlspecialchars($rec['Description']) . "</div>";
+            echo "<h6 class='receptentijd'>" . $rec['Createdat'] . "</h6>";
             echo "</a>";
             echo "</div>";
             echo "</td>";

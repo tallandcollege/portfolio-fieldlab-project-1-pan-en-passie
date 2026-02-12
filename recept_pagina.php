@@ -7,7 +7,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $pdo = require_once('includes/connection.php');
 
-$stmt = $pdo->prepare("SELECT id, name, description, instructions
+$stmt = $pdo->prepare("SELECT id, Name, Description, Instructions
     FROM Recipe
     WHERE id = ?");
 $stmt->execute([$recipeid]);
@@ -75,7 +75,7 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <br>
         <div class="recipe-body">
             <div class="left-column">
-                <h2>Ingrediënten</h2>
+                <h2>Ingredienten</h2>
                 <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
                         <li class="list">
