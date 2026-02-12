@@ -1,4 +1,4 @@
-<form method="GET" action="Recepten.php">
+<form method="GET" action=".php">
 <input name="search" type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
 </form>
 <div id="resultaten" aria-live="polite" style="display:none;">
