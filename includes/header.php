@@ -13,7 +13,7 @@
         }
 
         if (isset($_SESSION['user_id'])) {
-            $profileHref = "profile.php";
+            $profileHref = "profile.php?id=" . urlencode($_SESSION['user_id']);
         } else {
             $profileHref = "loginform.php";
         }
