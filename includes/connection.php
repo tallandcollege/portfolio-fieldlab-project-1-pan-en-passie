@@ -19,7 +19,7 @@ function connect(): PDO
     return $pdo;
 }
 
-// ✅ ZORG DAT $pdo OOK ECHT BESTAAT IN DEZE FILE (global scope)
+
 $pdo = connect();
 
 /**

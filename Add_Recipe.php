@@ -57,8 +57,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             throw new Exception("user_id is required");
         }
 
+        $userID = $_SESSION['user_id'] ?? $_POST['user_id'] ?? 1; // Default to user 1 (admin)
+
+        if (empty($userID)) {
+            throw new Exception("user_id is required");
+        }
+
         $queryRecipe = "
             INSERT INTO recipe 
+            (user_id, name, description, instructions, createdat)
+            VALUES (:user_id, :name, :description, :instructions, :createdat)
             (user_id, name, description, instructions, createdat)
             VALUES (:user_id, :name, :description, :instructions, :createdat)
         ";
@@ -66,6 +74,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmtRecipe = $pdo->prepare($queryRecipe);
 
         $stmtRecipe->execute([
+            ':user_id'      => $userID,
+            ':name'         => $_POST['namerecipe'] ?? '',
+            ':description'  => $description,
+            ':instructions' => $instructionsJson,
             ':user_id'      => $userID,
             ':name'         => $_POST['namerecipe'] ?? '',
             ':description'  => $description,
@@ -123,7 +135,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
                 $ingredientName = trim($ingredientName);
                 if (empty($ingredientName)) continue;
+            foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
+                $ingredientName = trim($ingredientName);
+                if (empty($ingredientName)) continue;
 
+                $stmtCheckIngredient->execute([':name' => $ingredientName]);
+                $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
                 $stmtCheckIngredient->execute([':name' => $ingredientName]);
                 $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
 
@@ -138,7 +155,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
 
                 $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
+                $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
 
+                $stmtRecipeIngredient->execute([
+                    ':rec_id'   => $recipeID,
+                    ':ing_id'   => $ingredientID,
+                    ':aantal'   => $naarSmaak ? null : ($_POST['ingredient_amount'][$index] ?? null),
+                    ':eenheid'  => $naarSmaak ? '*' : ($_POST['ingredient_unit'][$index] ?? null),
+                    ':role'     => $naarSmaak ? 'naarsmaak' : ($_POST['ingredient_role'][$index] ?? 'standaard')
+                ]);
+            }
                 $stmtRecipeIngredient->execute([
                     ':rec_id'   => $recipeID,
                     ':ing_id'   => $ingredientID,
@@ -163,6 +189,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ':description' => $_POST['aanvullingen']
             ]);
         }
+
+        /* ==========================
+            FOTO TOEVOEGEN
+        ========================== */
+        if (isset($_FILES['photo'])) {
+            // Gebruik de zojuist aangemaakte recipe ID
+            $name     = $_FILES['photo']['name'];
+            $tmpName  = $_FILES['photo']['tmp_name'];
+
+            // Lees het bestand als binaire data
+            $imageData = file_get_contents($tmpName);
+
+            try {
+                $query = "INSERT INTO photos (user_id, recipe_id, name, image) 
+                  VALUES (:user_id, :recipe_id, :name, :image)";
+
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
+                $stmt->bindParam(':recipe_id', $recipeID, PDO::PARAM_INT);
+                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                $stmt->bindParam(':image', $imageData, PDO::PARAM_LOB);
+
+                $stmt->execute();
+            } catch (Exception $e) {
+                echo "Fout bij uploaden: " . $e->getMessage();
+            }
+        }
+
 
         /* ==========================
             FOTO TOEVOEGEN
@@ -247,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="nl">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -267,6 +322,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             display: none;
             z-index: 9999;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-message.success {
+            background-color: #4CAF50;
+        }
+
+        .popup-message.error {
+            background-color: #f44336;
         }
 
         .popup-message.success {
@@ -281,19 +345,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
     <?php include("includes/header.php"); ?>
+    <?php include("includes/header.php"); ?>
 
     <div id="popup-message" class="popup-message"></div>
+    <div id="popup-message" class="popup-message"></div>
 
+    <main class="addRecipe-main">
+        <section class="addRecipe-section">
+            <form method="POST" enctype="multipart/form-data">
     <main class="addRecipe-main">
         <section class="addRecipe-section">
             <form method="POST" enctype="multipart/form-data">
 
                 <label class="form-label">Naam recept</label>
                 <input name="namerecipe" required>
+                <label class="form-label">Naam recept</label>
+                <input name="namerecipe" required>
 
                 <label class="form-label">Beschrijving</label>
                 <textarea name="recipe_description"></textarea>
+                <label class="form-label">Beschrijving</label>
+                <textarea name="recipe_description"></textarea>
 
+                <label class="form-label">Materialen</label>
+                <ul id="materialen-list">
+                    <li class="materiaal-item">
+                        <input name="materiaal[]" placeholder="Materiaal">
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
+                <button type="button" class="recipe-submit" onclick="addMateriaal()">Materiaal toevoegen</button>
                 <label class="form-label">Materialen</label>
                 <ul id="materialen-list">
                     <li class="materiaal-item">
@@ -310,7 +391,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <input type="checkbox" name="ingredient_naarsmaak[]" onchange="toggleAmount(this)">
                             Naar smaak
                         </label>
+                <label class="form-label">Ingrediënten</label>
+                <ul id="ingredienten">
+                    <li class="ingredient-item">
+                        <label class="naarsmaak">
+                            <input type="checkbox" name="ingredient_naarsmaak[]" onchange="toggleAmount(this)">
+                            Naar smaak
+                        </label>
 
+                        <input name="ingredient_amount[]" type="number" step="any">
+                        <select name="ingredient_unit[]">
+                            <option value="st">Stuks</option>
+                            <option value="tl">Tl</option>
+                            <option value="el">El</option>
+                            <option value="bs">Bosje</option>
+                            <option value="g">G</option>
+                            <option value="kg">KG</option>
+                            <option value="ml">ML</option>
+                            <option value="dl">DL</option>
+                            <option value="l">L</option>
+                            <option value="fles">Fles</option>
+                        </select>
+                        <input name="ingredient_name[]" placeholder="Ingrediënt">
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
+                <button type="button" class="recipe-submit" onclick="addIngredient()">Ingrediënt toevoegen</button>
                         <input name="ingredient_amount[]" type="number" step="any">
                         <select name="ingredient_unit[]">
                             <option value="st">Stuks</option>
@@ -338,6 +444,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </li>
                 </ul>
                 <button type="button" class="recipe-submit" onclick="addInstruction()">Instructie toevoegen</button>
+                <label class="form-label">Instructies</label>
+                <ul id="instruction-list">
+                    <li class="instruction-item">
+                        <textarea name="instruction[]"></textarea>
+                        <button type="button" onclick="removeItem(this)">❌</button>
+                    </li>
+                </ul>
+                <button type="button" class="recipe-submit" onclick="addInstruction()">Instructie toevoegen</button>
+
+                <label class="form-label">Notities</label>
+                <textarea name="aanvullingen" class="aanvullingen"></textarea>
+
+
+                <label>Upload foto:</label>
+                <input type="file" name="photo" accept="image/*" required>
+
+                <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'] ?? 1; ?>">
 
                 <label class="form-label">Notities</label>
                 <textarea name="aanvullingen" class="aanvullingen"></textarea>
@@ -354,7 +477,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         </section>
     </main>
+                <button type="submit" class="recipe-submit">Opslaan</button>
+            </form>
 
+        </section>
+    </main>
+
+    <?php include("includes/footer.php"); ?>
     <?php include("includes/footer.php"); ?>
 
     <script>
@@ -366,7 +495,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             popup.style.display = 'block';
             setTimeout(() => popup.style.display = 'none', 3000);
         }
+    <script>
+        // POPUP FUNCTIE
+        function showPopup(message, type) {
+            const popup = document.getElementById('popup-message');
+            popup.textContent = message;
+            popup.className = 'popup-message ' + type;
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 3000);
+        }
 
+        // DYNAMISCH TOEVOEGEN EN VERWIJDEREN
+        function addIngredient() {
+            const li = document.createElement("li");
+            li.className = "ingredient-item";
+            li.innerHTML = `
         // DYNAMISCH TOEVOEGEN EN VERWIJDEREN
         function addIngredient() {
             const li = document.createElement("li");
@@ -394,7 +537,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("ingredienten").appendChild(li);
         }
+            document.getElementById("ingredienten").appendChild(li);
+        }
 
+        function addInstruction() {
+            const li = document.createElement("li");
+            li.className = "instruction-item";
+            li.innerHTML = `
         function addInstruction() {
             const li = document.createElement("li");
             li.className = "instruction-item";
@@ -404,7 +553,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("instruction-list").appendChild(li);
         }
+            document.getElementById("instruction-list").appendChild(li);
+        }
 
+        function addMateriaal() {
+            const li = document.createElement("li");
+            li.className = "materiaal-item";
+            li.innerHTML = `
         function addMateriaal() {
             const li = document.createElement("li");
             li.className = "materiaal-item";
@@ -414,11 +569,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         `;
             document.getElementById("materialen-list").appendChild(li);
         }
+            document.getElementById("materialen-list").appendChild(li);
+        }
 
         function removeItem(button) {
             button.closest("li").remove();
         }
+        function removeItem(button) {
+            button.closest("li").remove();
+        }
 
+        // NAAAR SMAAK TOGGLE
+        function toggleAmount(checkbox) {
+            const amountInput = checkbox.closest("li").querySelector('input[name="ingredient_amount[]"]');
+            if (checkbox.checked) {
+                amountInput.value = '';
+                amountInput.disabled = true;
+            } else {
+                amountInput.disabled = false;
+            }
+        }
         // NAAAR SMAAK TOGGLE
         function toggleAmount(checkbox) {
             const amountInput = checkbox.closest("li").querySelector('input[name="ingredient_amount[]"]');
@@ -435,6 +605,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             cb.addEventListener('change', () => toggleAmount(cb));
         });
     </script>
+        // INITIËLE NAAAR SMAAK CHECKBOX
+        document.querySelectorAll('input[name="ingredient_naarsmaak[]"]').forEach(cb => {
+            cb.addEventListener('change', () => toggleAmount(cb));
+        });
+    </script>
 </body>
+
 
 </html>
