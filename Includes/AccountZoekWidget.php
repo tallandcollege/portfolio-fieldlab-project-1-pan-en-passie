@@ -1,9 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+include_once("Includes/connection.php");
 
-include("Includes/connection.php");
 
 $users = [];
 $selectedIds = [];

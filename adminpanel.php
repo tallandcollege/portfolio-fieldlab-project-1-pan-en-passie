@@ -1,5 +1,5 @@
 <?php
-    session_start();
+ include_once('Includes/connection.php');
     ob_start();
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         header("Location: index.php");
