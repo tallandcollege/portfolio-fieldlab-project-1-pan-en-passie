@@ -5,7 +5,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 } else {
     $recipeid = (int)$_GET['id'];
 }
-$pdo = require_once('includes/connection.php');
+require_once('includes/connection.php');
+$pdo = connect();
 
 $stmt = $pdo->prepare("SELECT id, Name, Description, Instructions
     FROM Recipe
@@ -13,7 +14,7 @@ $stmt = $pdo->prepare("SELECT id, Name, Description, Instructions
 $stmt->execute([$recipeid]);
 $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$steps = explode("\n", $recipe['instructions']);
+$steps = explode("\n", $recipe['Instructions']);
 
 
 $stmt = $pdo->prepare("
@@ -63,7 +64,7 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php include("includes/header.php"); ?>
     <div>
         <div class="recipe-header">
-            <h1><?= htmlspecialchars($recipe['name']) ?></h1>
+            <h1><?= htmlspecialchars($recipe['Name']) ?></h1>
             <?php if (!empty($notes)): ?>
                 <div class="recipe-notes">
                     <?php foreach ($notes as $note): ?>

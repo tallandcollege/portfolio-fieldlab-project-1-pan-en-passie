@@ -12,7 +12,9 @@
     <?php
 
     if (isset($_GET['term'])) {
-        $pdo = require_once 'connection.php';
+        require_once 'connection.php';
+        $pdo = connect();
+
 
 
         // Optional safety check
@@ -29,7 +31,7 @@
         }
 
         $like = "%{$term}%";
-        $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM recipe r LEFT JOIN recipe_ingredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
+        $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, '' as foto FROM recipe r LEFT JOIN recipeingredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
         $stmt->execute(['term' => $like]);
         $rows = $stmt->fetchAll();
     }
@@ -43,9 +45,14 @@
         }
 
         foreach ($rows as $resultaten) {
+
             $naam = htmlspecialchars($resultaten['naam'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $ing  = htmlspecialchars($resultaten['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            $foto = $resultaten['foto'] ? htmlspecialchars($fotopad . $resultaten['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'fotos/default.png';
+
+            $foto = !empty($resultaten['foto'])
+                ? htmlspecialchars($fotopad . $resultaten['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                : '../fotos/default.png';
+
             echo "<a href='../recept_pagina.php?id={$resultaten['id']}' target='_top'>
         <div class='kaart' data-naam='{$naam}'>
           <img src='{$foto}' alt='Foto van {$naam}'/>

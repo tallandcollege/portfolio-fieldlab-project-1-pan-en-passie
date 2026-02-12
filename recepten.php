@@ -1,5 +1,5 @@
 <?php
-include "includes/connect.php";
+include "includes/connection.php";
 $pdo = connect();
 ?>
 <!DOCTYPE html>
