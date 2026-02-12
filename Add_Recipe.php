@@ -3,24 +3,73 @@ include "includes/connect.php";
 $conn = connect();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    error_log("DEBUG: POST received");
+    error_log("DEBUG: POST data: " . print_r($_POST, true));
 
     try {
         $conn->beginTransaction();
 
+        // Valideer required velden
+        if (empty($_POST['namerecipe'])) {
+            throw new Exception("Receptnaam is verplicht");
+        }
+
+        // Check of recept al bestaat (duplicate prevention)
+        $checkDuplicateQuery = "SELECT id FROM recipe WHERE name = ? AND description = ? LIMIT 1";
+        $stmtCheck = $conn->prepare($checkDuplicateQuery);
+
+        $description = $_POST['recipe_description'] ?? '';
+        $instructions = $_POST['instruction'] ?? [];
+        if (!is_array($instructions)) {
+            $instructions = [$instructions];
+        }
+        $instructionsJson = json_encode($instructions);
+
+        $stmtCheck->execute([$_POST['namerecipe'], $description]);
+        $existingRecipe = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+        if ($existingRecipe) {
+            // Rol terug en toon een popup in de browser (of fallback naar alert), daarna redirect naar Add_Recipe
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            echo "<script>
+                window.addEventListener('load', function(){
+                    if (typeof showPopup === 'function') {
+                        showPopup('Dit recept bestaat al in de database!', 'error');
+                    } else {
+                        alert('Dit recept bestaat al in de database!');
+                    }
+                    setTimeout(function(){
+                        window.location.href = 'Add_Recipe.php';
+                    }, 2000);
+                });
+            </script>";
+            exit;
+        }
+
         /* ==========================
            RECEPT OPSLAAN
         ========================== */
+        $userID = $_SESSION['user_id'] ?? $_POST['user_id'] ?? 1; // Default to user 1 (admin)
+
+        if (empty($userID)) {
+            throw new Exception("user_id is required");
+        }
+
         $queryRecipe = "
             INSERT INTO recipe 
-            (Name, Description, Instructions, Createdat)
-            VALUES (:name, :description, :instructions, :createdat)
+            (user_id, name, description, instructions, createdat)
+            VALUES (:user_id, :name, :description, :instructions, :createdat)
         ";
 
         $stmtRecipe = $conn->prepare($queryRecipe);
+
         $stmtRecipe->execute([
-            ':name'         => $_POST['namerecipe'],
-            ':description'  => $_POST['recipe_description'],
-            ':instructions' => json_encode($_POST['instruction']),
+            ':user_id'      => $userID,
+            ':name'         => $_POST['namerecipe'] ?? '',
+            ':description'  => $description,
+            ':instructions' => $instructionsJson,
             ':createdat'    => date('Y-m-d H:i:s')
         ]);
 
@@ -35,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmtCheckMaterial  = $conn->prepare($checkMaterialQuery);
             $stmtInsertMaterial = $conn->prepare($insertMaterialQuery);
 
-            $insertRecipeMaterialQuery = "INSERT INTO recipematerial (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
+            $insertRecipeMaterialQuery = "INSERT INTO recipe_material (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
             $stmtRecipeMaterial = $conn->prepare($insertRecipeMaterialQuery);
 
             foreach ($_POST['materiaal'] as $materiaalName) {
@@ -62,45 +111,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         /* ==========================
            INGREDIËNTEN VERWERKEN
         ========================== */
-        $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
-        $insertIngredientQuery = "INSERT INTO ingredient (name, categoryID) VALUES (:name, :categoryID)";
-        $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
-        $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
+        if (!empty($_POST['ingredient_name'])) {
+            $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
+            $insertIngredientQuery = "INSERT INTO ingredient (name, category_id) VALUES (:name, :cat_id)";
+            $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
+            $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
 
-        $queryRecipeIngredient = "
-            INSERT INTO recipeingredient
-            (recipe_id, Ingredient_id, Aantal, Eenheid, IngredientRole)
-            VALUES (:recipe_id, :Ingredient_id, :Aantal, :Eenheid, :IngredientRole)
-        ";
-        $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
+            $queryRecipeIngredient = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)";
+            $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
 
-        foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
-            $ingredientName = trim($ingredientName);
-            if (empty($ingredientName)) continue;
+            foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
+                $ingredientName = trim($ingredientName);
+                if (empty($ingredientName)) continue;
 
-            $stmtCheckIngredient->execute([':name' => $ingredientName]);
-            $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
+                $stmtCheckIngredient->execute([':name' => $ingredientName]);
+                $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
 
-            if (!$ingredient) {
-                $stmtInsertIngredient->execute([
-                    ':name'       => $ingredientName,
-                    ':categoryID' => 18
+                if (!$ingredient) {
+                    $stmtInsertIngredient->execute([
+                        ':name'   => $ingredientName,
+                        ':cat_id' => 18
+                    ]);
+                    $ingredientID = $conn->lastInsertId();
+                } else {
+                    $ingredientID = $ingredient['id'];
+                }
+
+                $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
+
+                $stmtRecipeIngredient->execute([
+                    ':rec_id'   => $recipeID,
+                    ':ing_id'   => $ingredientID,
+                    ':aantal'   => $naarSmaak ? null : ($_POST['ingredient_amount'][$index] ?? null),
+                    ':eenheid'  => $naarSmaak ? '*' : ($_POST['ingredient_unit'][$index] ?? null),
+                    ':role'     => $naarSmaak ? 'naarsmaak' : ($_POST['ingredient_role'][$index] ?? 'standaard')
                 ]);
-                $ingredientID = $conn->lastInsertId();
-            } else {
-                $ingredientID = $ingredient['id'];
             }
-
-            // FIX: Undefined array key probleem
-            $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
-
-            $stmtRecipeIngredient->execute([
-                ':recipe_id'      => $recipeID,
-                ':Ingredient_id'  => $ingredientID,
-                ':Aantal'         => $naarSmaak ? null : $_POST['ingredient_amount'][$index],
-                ':Eenheid'        => $naarSmaak ? '*' : $_POST['ingredient_unit'][$index],
-                ':IngredientRole' => $naarSmaak ? 'naarsmaak' : ($_POST['ingredient_role'][$index] ?? 'standaard')
-            ]);
         }
 
         /* ==========================
@@ -118,13 +164,54 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ]);
         }
 
+        /* ==========================
+            FOTO TOEVOEGEN
+        ========================== */
+        if (isset($_FILES['photo'])) {
+            // Gebruik de zojuist aangemaakte recipe ID
+            $name     = $_FILES['photo']['name'];
+            $tmpName  = $_FILES['photo']['tmp_name'];
+
+            // Lees het bestand als binaire data
+            $imageData = file_get_contents($tmpName);
+
+            try {
+                $query = "INSERT INTO photos (user_id, recipe_id, name, image) 
+                  VALUES (:user_id, :recipe_id, :name, :image)";
+
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
+                $stmt->bindParam(':recipe_id', $recipeID, PDO::PARAM_INT);
+                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                $stmt->bindParam(':image', $imageData, PDO::PARAM_LOB);
+
+                $stmt->execute();
+            } catch (Exception $e) {
+                echo "Fout bij uploaden: " . $e->getMessage();
+            }
+        }
+
+
         $conn->commit();
 
-        // POPUP SUCCESS
-        echo "<script>showPopup('Recept succesvol opgeslagen!', 'success');</script>";
+        // Pop-up succes en redirect naar recept pagina
+        echo "<script>
+            showPopup('Recept succesvol opgeslagen!', 'success');
+            setTimeout(function() {
+                window.location.href = 'recept_pagina.php?id=" . $recipeID . "';
+            }, 2000);
+        </script>";
     } catch (Exception $e) {
         $conn->rollBack();
-        echo "<script>showPopup('Fout: " . addslashes($e->getMessage()) . "', 'error');</script>";
+        $error = $e->getMessage();
+        error_log("Add_Recipe Error: " . $error);
+        echo "<script>showPopup('Fout: " . addslashes($error) . "', 'error');</script>";
+        echo "<!-- Debug: " . htmlspecialchars($error) . " -->";
+        echo "<div style='background: #fee; padding: 10px; margin: 10px; border: 1px solid red;'>";
+        echo "<strong>Debug Fout:</strong><br>";
+        echo htmlspecialchars($error);
+        echo "</div>";
+        error_log("Backtrace: " . $e->getTraceAsString());
     }
 }
 ?>
@@ -171,16 +258,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <main class="addRecipe-main">
         <section class="addRecipe-section">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
+
                 <label class="form-label">Naam recept</label>
-                <section class="Recipe_name">
-                    <input name="namerecipe" required>
-                    <select>
-                        <option value="Makkelijk">Makkelijk ⭐</option>
-                        <option value="Gemiddeld">Gemiddeld ⭐⭐</option>
-                        <option value="Moeilijk">Moeilijk ⭐⭐⭐</option>
-                    </select>
-                </section>
+                <input name="namerecipe" required>
+
                 <label class="form-label">Beschrijving</label>
                 <textarea name="recipe_description"></textarea>
 
@@ -232,8 +314,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label class="form-label">Notities</label>
                 <textarea name="aanvullingen" class="aanvullingen"></textarea>
 
+
+                <label>Upload foto:</label>
+                <input type="file" name="photo" accept="image/*" required>
+
+                <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'] ?? 1; ?>">
+
+
                 <button type="submit" class="recipe-submit">Opslaan</button>
             </form>
+
         </section>
     </main>
 

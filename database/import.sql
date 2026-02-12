@@ -1,73 +1,79 @@
+-- Drop en hermaak database
 DROP DATABASE IF EXISTS pan_en_passie;
-CREATE DATABASE pan_en_passie CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE pan_en_passie;
 USE pan_en_passie;
 
-CREATE TABLE Role (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255)
-);
-
-CREATE TABLE Users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    firstname VARCHAR(255),
-    lastname VARCHAR(255),
-    username VARCHAR(255) UNIQUE,
-    email VARCHAR(255) UNIQUE,
-    passwordhash VARCHAR(255),
-    role_id INT,
-    FOREIGN KEY (role_id) REFERENCES Role(id)
-);
 
 -- ======================
--- NaN Accounts (not assigned to a user)
+-- ROLE
 -- ======================
-CREATE TABLE nan_account (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    firstname VARCHAR(255),
-    lastname VARCHAR(255),
-    username VARCHAR(255) UNIQUE,
-    email VARCHAR(255) UNIQUE,
-    UserKey VARCHAR(255) UNIQUE,
-    role_id INT,
-    FOREIGN KEY (role_id) REFERENCES role(id)
-);
-
-CREATE TABLE Class (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    classname VARCHAR(255),
-    description TEXT,
-    maxstudents INT,
-    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    createrecipeperms BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE Student (
-    user_id INT,
-    class_id INT,
-    role_id INT,
-    PRIMARY KEY (user_id, class_id),
-    FOREIGN KEY (user_id) REFERENCES Users(id),
-    FOREIGN KEY (class_id) REFERENCES Class(id),
-    FOREIGN KEY (role_id) REFERENCES Role(id)
-);
-
-CREATE TABLE Category (
-    categoryID INT AUTO_INCREMENT PRIMARY KEY,
-    category VARCHAR(255) NOT NULL
-);
+CREATE TABLE role (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
 
 INSERT INTO role (name) VALUES
 ('student'),
 ('docent'),
 ('admin');
 
+
+-- ======================
+-- NAN_ACCOUNT
+-- ======================
+CREATE TABLE nan_account (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
+    username VARCHAR(255) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    UserKey VARCHAR(255) UNIQUE,
+    role_id INT UNSIGNED,
+    FOREIGN KEY (role_id) REFERENCES Role(id)
+) ENGINE=InnoDB;
+
+-- ======================
+-- CLASS
+-- ======================
+CREATE TABLE class (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    classname VARCHAR(255),
+    description TEXT,
+    maxstudents INT,
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    createrecipeperms TINYINT(1) DEFAULT 0
+) ENGINE=InnoDB;
+
+
+-- ======================
+-- USERS
+-- ======================
+CREATE TABLE users (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
+    username VARCHAR(255) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    passwordhash VARCHAR(255),
+    role_id INT UNSIGNED NOT NULL,
+    CONSTRAINT fk_users_role
+        FOREIGN KEY (role_id) REFERENCES role(id)
+) ENGINE=InnoDB;
+
 INSERT INTO users 
             (firstname, lastname, username, email, passwordhash, role_id)
             VALUES ('admin', 'admin', 'admin', 'admin@admin.nl', '$2y$12$rKUNTeP5MPyo.fj/7e4K2unDJC1pp361F5HM3Ts3To/0F/CPq7gMe', 3),
             ('chef', 'chef', 'chef', 'chef@chef.nl', '$2a$12$7QX67PT0QO1ptSUWaiMJ0u9DRORkQiGK.9aPOmjPyyOYgm4iHK4CS', 2);
 
-INSERT INTO Category (categoryID, category) VALUES
+-- =====================================================
+-- CATEGORY
+-- =====================================================
+CREATE TABLE category (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+INSERT INTO category (id, category) VALUES
 (1, 'vlees'),
 (2, 'groente'),
 (3, 'vis'),
@@ -87,15 +93,17 @@ INSERT INTO Category (categoryID, category) VALUES
 (17, 'meel'),
 (18, 'invullen');
 
-
-CREATE TABLE Ingredient (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+-- ======================
+-- INGREDIENT
+-- ======================
+CREATE TABLE ingredient (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    categoryID INT NOT NULL,
-    FOREIGN KEY (categoryID) REFERENCES Category(categoryID)
-);
-
-INSERT INTO Ingredient (name, categoryID) VALUES
+    category_id INT UNSIGNED NOT NULL,
+    CONSTRAINT fk_ingredient_category
+        FOREIGN KEY (category_id) REFERENCES category(id)
+) ENGINE=InnoDB;
+INSERT INTO ingredient (name, category_id) VALUES
 ('Kalfs ribeye', 1),
 ('Tijm', 12),
 ('Rozemarijn', 12),
@@ -162,12 +170,15 @@ INSERT INTO Ingredient (name, categoryID) VALUES
 ('Cacaopoeder', 6),
 ('Grof zeezout', 5);
 
-CREATE TABLE Material (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL
-);
+-- =====================================================
+-- MATERIAL
+-- =====================================================
+CREATE TABLE material (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
 
-INSERT INTO Material (Name) VALUES
+INSERT INTO material (Name) VALUES
 ('Bolzeef'),('Bekken'),('Garde'),('Officemes'),('Diepe gastronormbak'),
 ('Chinese mandoline'),('Passeerdoek'),('Thermoblender'),('Spuitflesje'),
 ('Kookpan'),('Dunschiller'),('Vergiet'),('Keukenpapier'),('Röner'),
@@ -176,19 +187,24 @@ INSERT INTO Material (Name) VALUES
 ('Afruimbak'),('Staafmixer'),('Spuitzak'),('Kitchen Aid'),('Magic Mix'),
 ('Snijplank'),('Koksmes'),('Koekenpan'),('Grillpan'),('Slagerstouw'),('Litermaat');
 
-CREATE TABLE Recipe (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    User_id INT DEFAULT NULL,
-    Class_id INT DEFAULT NULL,
-    Name VARCHAR(255),
-    Description TEXT,
-    Instructions TEXT,
-    Createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (User_id) REFERENCES Users(id),
-    FOREIGN KEY (Class_id) REFERENCES Class(id)
-);
+-- =====================================================
+-- RECIPE
+-- =====================================================
+CREATE TABLE recipe (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NULL,
+    class_id INT UNSIGNED NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    instructions TEXT,
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_recipe_user
+        FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_recipe_class
+        FOREIGN KEY (class_id) REFERENCES class(id)
+) ENGINE=InnoDB;
 
-INSERT INTO Recipe (User_id, Class_id, id, Name, Description, Instructions) VALUES
+INSERT INTO recipe (User_id, Class_id, id, Name, Description, Instructions) VALUES
 (NULL, NULL,1,'Kalfs ribeye','Voorgerecht — Aantal personen: 20','Verwarm de oven voor op 80°C.\nSmeer de rib-eye in met olijfolie.\nPel en hak de knoflook. Smeer de knoflook op de rib-eye.\nBind met slagerstouw de tijm en de rozemarijn om de rib-eye.\nGrill de rib-eye om en om in een grillpan. Gaar de rib-eye verder in de oven op kerntemperatuur 54°C.\nLaat het vlees afkoelen.'),
 (NULL, NULL,2,'Ansjovis mayonaise','Voorgerecht — Aantal personen: 20','Doe de mosterd, het ei, de sushi azijn, het limoensap, kappertjes, ansjovis en het water in een litermaat.\nVoeg de peper, het zout en de worcestersaus toe.\nSchenk langzaam de olie in de litermaat.\nPlaats de staafmixer langzaam in het mengsel en mix tot een gladde mayonaise.'),
 (NULL, NULL,3,'Millefeuille van biet','Vegetarisch tussengerecht — Aantal personen: 20','Schil de bieten. Snijd de bieten in dunne plakjes met behulp van een Chinese snijmachine. Leg een plakje op de werkbank en rol deze op. Bind ze vast met keukentouw. Herhaal dit tot je 20 pakketjes hebt.\nLeg de opgebonden bietenpakketjes rechtop in een diepe bak. Voeg bietensap toe tot de bieten half onder het sap staan. Breng aan de kook en laat ze ± 20 minuten op de plaat licht koken. Draai de bieten voorzichtig om en laat ze ± 20 minuten licht koken tot ze gaar zijn.\nWarm de bietjes voor de doorgifte op in het vocht.\nVerwijder de touwtjes en leg 1 pakketje op een bord.'),
@@ -208,19 +224,25 @@ INSERT INTO Recipe (User_id, Class_id, id, Name, Description, Instructions) VALU
 (NULL, NULL,17,'Bananenbuideltjes','Nagerecht — Aantal personen: 20','Pel de bananen en snijd ze elk in 10 plakjes.\nMeng de suiker met de kaneel en vermeng dit met bananen plakjes.\nSmeer een kant van een wonton velletje in met water.\nLeg een plakje banaan in het wonton velletje en vouw dit als een buideltje.\nLeg ze op slagersfolie en vries ze aan in de vriezer.\nBak ze net voor de doorgifte van het nagerecht een minuut in het olie van 180 graden in de frituur.\nBestrooi met poedersuiker.'),
 (NULL, NULL,18,'Crumble','Nagerecht — Aantal personen: 20','Meng de droge ingredienten (suiker, amandelpoeder, bloem, cacaopoeder, zout) in een bekken.\nSnijd de boter in kleine blokjes en voeg toe aan het mengsel.\nWrijf de boter door het mengsel tot een kruimelige structuur ontstaat.\nVerdeel de crumble over een bakplaat en bak in een voorverwarmde oven op 180°C gedurende 15-20 minuten tot goudbruin.');
 
-
-CREATE TABLE RecipeIngredient (
-    Recipe_id INT,
-    Ingredient_id INT,
+-- =====================================================
+-- RECIPE_INGREDIENT
+-- =====================================================
+CREATE TABLE recipe_ingredient (
+    recipe_id INT UNSIGNED,
+    ingredient_id INT UNSIGNED,
     Aantal DECIMAL(10,2),
     Eenheid VARCHAR(50),
-    IngredientRole VARCHAR(255),
-    PRIMARY KEY (Recipe_id, Ingredient_id),
-    FOREIGN KEY (Recipe_id) REFERENCES Recipe(id) ON DELETE CASCADE,
-    FOREIGN KEY (Ingredient_id) REFERENCES Ingredient(id)
-);
+    IngredientRole VARCHAR(50),
+    role VARCHAR(255),
+    PRIMARY KEY (recipe_id, ingredient_id),
+    CONSTRAINT fk_ri_recipe
+        FOREIGN KEY (recipe_id) REFERENCES recipe(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_ri_ingredient
+        FOREIGN KEY (ingredient_id) REFERENCES ingredient(id)
+) ENGINE=InnoDB;
 
-INSERT INTO RecipeIngredient (Recipe_id, Ingredient_id, Aantal, Eenheid, IngredientRole) VALUES
+INSERT INTO recipe_ingredient (Recipe_id, Ingredient_id, Aantal, Eenheid, IngredientRole) VALUES
 (1, 1, 1200.00, 'g', 'hoofdingrediënt'),
 (1, 2, 0.25, 'bs', 'kruid'),
 (1, 3, 0.25, 'bs', 'kruid'),
@@ -324,15 +346,21 @@ INSERT INTO RecipeIngredient (Recipe_id, Ingredient_id, Aantal, Eenheid, Ingredi
 (18, 39, 1.00, 'g', 'specerij');
 
 
-CREATE TABLE RecipeMaterial (
-    Recipe_id INT,
-    Material_id INT,
-    PRIMARY KEY (Recipe_id, Material_id),
-    FOREIGN KEY (Recipe_id) REFERENCES Recipe(id) ON DELETE CASCADE,
-    FOREIGN KEY (Material_id) REFERENCES Material(id)
-);
+-- =====================================================
+-- RECIPE_MATERIAL
+-- =====================================================
+CREATE TABLE recipe_material (
+    recipe_id INT UNSIGNED,
+    material_id INT UNSIGNED,
+    PRIMARY KEY (recipe_id, material_id),
+    CONSTRAINT fk_rm_recipe
+        FOREIGN KEY (recipe_id) REFERENCES recipe(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_rm_material
+        FOREIGN KEY (material_id) REFERENCES material(id)
+) ENGINE=InnoDB;
 
-INSERT INTO RecipeMaterial (Recipe_id, Material_id) VALUES
+INSERT INTO recipe_material (Recipe_id, Material_id) VALUES
 (1,(SELECT id FROM Material WHERE Name='Snijplank' LIMIT 1)),
 (1,(SELECT id FROM Material WHERE Name='Koksmes' LIMIT 1)),
 (1,(SELECT id FROM Material WHERE Name='Koekenpan' LIMIT 1)),
@@ -355,15 +383,38 @@ INSERT INTO RecipeMaterial (Recipe_id, Material_id) VALUES
 (5,(SELECT id FROM Material WHERE Name='Thermoblender' LIMIT 1)),
 (5,(SELECT id FROM Material WHERE Name='Spuitflesje' LIMIT 1));
 
-CREATE TABLE Aanvulling (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    Recipe_id INT NOT NULL,
+-- =====================================================
+-- AANVULLING
+-- =====================================================
+CREATE TABLE aanvulling (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    recipe_id INT UNSIGNED NOT NULL,
     description TEXT NOT NULL,
-    FOREIGN KEY (Recipe_id) REFERENCES Recipe(id) ON DELETE CASCADE
-);
+    CONSTRAINT fk_aanvulling_recipe
+        FOREIGN KEY (recipe_id) REFERENCES recipe(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-INSERT INTO Aanvulling (Recipe_id, description) VALUES
+INSERT INTO aanvulling (Recipe_id, description) VALUES
 (14, 'Serveer de parfait op een crumble, dat voorkomt dat de parfait direct gaat smelten op het bord!'),
 (12, 'Niet te lang mengen, anders wordt de puree taai!'),
 (3, 'Denk erom dat ze niet aanbranden.'),
 (2, 'Probeer de olie bovenop de bestanddelen te krijgen.');
+
+-- =====================================================
+-- PHOTOS (LONGBLOB – GEEN ERRNO 150)
+-- =====================================================
+CREATE TABLE photos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    recipe_id INT UNSIGNED NOT NULL,
+    name VARCHAR(255),
+    image LONGBLOB NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_photos_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_photos_recipe
+        FOREIGN KEY (recipe_id) REFERENCES recipe(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;

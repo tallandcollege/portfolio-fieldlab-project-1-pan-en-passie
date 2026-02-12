@@ -459,7 +459,7 @@ footer p {
   border-bottom: 1px solid #ddd;
 }
 
-.User-Search-item{
+.User-Search-item {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -506,7 +506,7 @@ footer p {
   width: 100%;
 }
 
-.User-Search-item p{
+.User-Search-item p {
   margin: 0;
   white-space: nowrap;
 }
@@ -516,11 +516,12 @@ footer p {
 }
 
 /* checkbox column */
-.User-Search-item input{
+.User-Search-item input {
   flex: 0 0 24px;
 }
 
-.registratie-main, .addRecipe-main {
+.registratie-main,
+.addRecipe-main {
   margin-top: 20px;
   margin-bottom: 40px;
   width: 100%;
@@ -530,7 +531,8 @@ footer p {
   align-items: center;
 }
 
-.registratie-section, .addRecipe-section{
+.registratie-section,
+.addRecipe-section {
   display: flex;
   gap: 20px;
   align-items: center;
@@ -538,6 +540,31 @@ footer p {
   text-align: center;
   padding: 20px;
   min-height: 80vh;
+}
+
+.recepten-section {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: min(96%, 1200px);
+  margin-top: 20px;
+  margin-top: 20px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+  gap: 20px;
+  text-align: left;
+  overflow-y: scroll;
+  height: 70.75%;
+}
+
+@media (max-width: 700px) {
+  .recepten-section {
+    padding: 10px !important;
+  }
 }
 
 .recipe-image {
@@ -576,7 +603,6 @@ h2 {
   font-weight: bold;
   margin: 16px 0 8px 0;
   padding-bottom: 4px;
-  border-bottom: 2px solid #000;
   color: #333;
 }
 
@@ -854,7 +880,7 @@ label {
   }
 }
 
-.registratie-section form{
+.registratie-section form {
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -862,8 +888,10 @@ label {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  width: 96%;        /* ~2% space on each side on mobile */
-  max-width: 700px;  /* wider on desktop */
+  width: 96%;
+  /* ~2% space on each side on mobile */
+  max-width: 700px;
+  /* wider on desktop */
   margin: 0 auto;
   gap: 12px;
 }
@@ -876,7 +904,8 @@ label {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: min(96%, 1200px); /* wider on desktop */
+  width: min(96%, 1200px);
+  /* wider on desktop */
   margin: 0 auto;
 }
 
@@ -888,7 +917,8 @@ label {
 
 .registratie-main input,
 select,
-textarea {
+textarea,
+.addRecipe-main input {
   display: block;
   width: 100%;
   padding: 8px;
@@ -906,7 +936,7 @@ textarea,
   box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
 }
 
-.registratie-submit{
+.registratie-submit {
   margin-top: 10px;
   padding: 10px;
   background-color: var(--UI);
@@ -917,9 +947,11 @@ textarea,
   font-weight: bold;
   transition: 0.1s;
 }
+
 .addRecipe-section label:nth-of-type(-n+2) {
   padding-bottom: 5px;
 }
+
 .addRecipe-section label:nth-of-type(n+2):nth-of-type(-n+3) {
   padding-top: 5px;
 }
@@ -927,16 +959,17 @@ textarea,
 .addRecipe-section label:nth-of-type(3) {
   padding-bottom: 3px;
 }
-.addRecipe-section label{
+
+.addRecipe-section label {
   margin-bottom: 5px;
   margin-top: 5px;
 }
 
-.aanvullingen{
+.aanvullingen {
   margin-bottom: 10px;
 }
 
-.recipe-submit{
+.recipe-submit {
   margin-bottom: 10px;
   padding: 10px;
   background-color: var(--UI);
@@ -947,6 +980,7 @@ textarea,
   font-weight: bold;
   transition: 0.1s;
 }
+
 .registratie-submit:hover {
   background-color: var(--Talland-groen);
 }
@@ -1042,11 +1076,16 @@ textarea,
 .ingredient-item {
   display: grid;
   grid-template-columns:
-    120px   /* naar smaak */
-    90px    /* amount */
-    80px    /* unit */
-    1fr     /* naam */
-    40px;   /* X */
+    120px
+    /* naar smaak */
+    90px
+    /* amount */
+    80px
+    /* unit */
+    1fr
+    /* naam */
+    40px;
+  /* X */
 
   gap: 10px;
   align-items: center;
@@ -1080,10 +1119,11 @@ textarea,
 .registratie-section textarea {
   resize: none;
 }
+
 .materiaal-item {
   display: grid;
   grid-template-columns: 1fr 40px;
-  gap: 10px;    
+  gap: 10px;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -1091,10 +1131,11 @@ textarea,
 .materiaal-item input {
   width: 100%;
 }
+
 .instruction-item {
   display: grid;
-  grid-template-columns: 1fr 40px; 
-  gap: 10px;    
+  grid-template-columns: 1fr 40px;
+  gap: 10px;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -1136,37 +1177,69 @@ textarea,
 }
 
 
-  .ingredient-item button {
-    width: 40px;
-    height: 40px;
-  }
+.ingredient-item button {
+  width: 40px;
+  height: 40px;
+}
 
 
-  .popup-message {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #333;
-    color: #fff;
-    padding: 20px 30px;
-    border-radius: 10px;
-    font-size: 16px;
-    display: none; /* Verberg standaard */
-    z-index: 9999;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+.popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  display: none;
+  /* Verberg standaard */
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .popup-message.success {
-    background-color: #4CAF50; /* groen voor succes */
+  background-color: #4CAF50;
+  /* groen voor succes */
 }
 
 .popup-message.error {
-    background-color: #f44336; /* rood voor fout */
+  background-color: #f44336;
+  /* rood voor fout */
 }
 
-.Recipe_name{
+.Recipe_name {
   display: grid;
   grid-template-columns: 75% 25%;
   gap: 10px;
+}
+
+.receptenstuk {
+  padding: 20px;
+   border: 2px solid #b3b3b3;
+  border-style: solid !important;
+    border-width: thin;
+  border-radius: 20px;
+  border-top: 0.5px solid #b3b3b3;
+  border-bottom: 2.5px solid #b3b3b3;
+  margin-bottom: 10px;
+
+}
+
+.receptenstuk a {
+  color: #000;
+  text-decoration: none;
+  padding-bottom: 10px;
+}
+
+.receptenstuk h2 {
+  font-size: 1.0rem !important;
+  font-weight: bold;
+  margin: 0px 0 0px 0 !important;
+  color: #000 !important;
+}
+
+.receptentijd{
+  margin-top: 5px;
 }
