@@ -1,6 +1,5 @@
-<?php 
-session_start();
-$pdo = require_once "includes/connection.php";
+<?php
+include_once "includes/connection.php";
 
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");

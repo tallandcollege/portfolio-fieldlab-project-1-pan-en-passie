@@ -5,10 +5,10 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 } else {
     $recipeid = (int)$_GET['id'];
 }
-$pdo = require_once('includes/connection.php');
+include_once('includes/connection.php');
 
 $stmt = $pdo->prepare("SELECT id, name, description, instructions
-    FROM Recipe
+    FROM recipe
     WHERE id = ?");
 $stmt->execute([$recipeid]);
 $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -28,6 +28,19 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$recipeid]);
 $ingredient = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+$photoStmt = $pdo->prepare("
+    SELECT filename FROM photo
+    WHERE recipe_id = :recipe_id
+    ORDER BY uploaded_at DESC
+    LIMIT 1
+");
+$photoStmt->execute([':recipe_id' => $recipeid]);
+$photo = $photoStmt->fetch(PDO::FETCH_ASSOC);
+
+$recipeImage = $photo ? 'uploads/' . $photo['filename'] : null;
+
 
 
 $stmt = $pdo->prepare("SELECT m.name 
@@ -64,6 +77,9 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div>
         <div class="recipe-header">
             <h1><?= htmlspecialchars($recipe['name']) ?></h1>
+            <?php if ($recipeImage): ?>
+                <img style="    height: 100px;" src="<?= htmlspecialchars($recipeImage) ?>" alt="<?= htmlspecialchars($recipe['name']) ?>">
+            <?php endif; ?>
             <?php if (!empty($notes)): ?>
                 <div class="recipe-notes">
                     <?php foreach ($notes as $note): ?>
@@ -79,11 +95,11 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
                         <li class="list">
-                            
-                               <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
+
+                            <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
                             <hr>
                             <div class="eenheid"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
-                         
+
                             <hr>
                             <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
                         </li>
