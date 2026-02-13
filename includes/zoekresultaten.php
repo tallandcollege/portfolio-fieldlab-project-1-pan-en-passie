@@ -12,7 +12,7 @@
     <?php
 
     if (isset($_GET['term'])) {
-        require_once 'connection.php';
+        require_once __DIR__ . "/connection.php";
         $pdo = connect();
 
 

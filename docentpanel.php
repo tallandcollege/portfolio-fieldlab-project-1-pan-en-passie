@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'docent') {
     exit;
 }
 
-$pdo = require_once('includes/connection.php');
+$pdo = require_once(__DIR__ . "/Includes/connection.php");
 
 // Haal alle recepten op
 $stmt = $pdo->query("
@@ -31,7 +31,7 @@ $fotopad = 'fotos/';
 </head>
 
 <body>
-    <?php include("Includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
     <div class="docent-intro">
         <h1>leraren panel</h1>
         <p>Welkom,
@@ -91,7 +91,7 @@ $fotopad = 'fotos/';
 
 
     </section>
-    <?php include("Includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 </body>
 
 
