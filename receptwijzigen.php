@@ -1,5 +1,5 @@
 <?php
-$pdo = require_once(__DIR__ . "/Includes/connection.php");
+$pdo = require_once('includes/connection.php');
 
 $receptid = $_GET['id'] ?? null;
 if (!$receptid || !is_numeric($receptid)) {
@@ -106,7 +106,7 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include("Includes/header.php"); ?>
     <main role="main">
         <div class="docent-intro">
             <h1>Recept Wijzigen: <?= htmlspecialchars($recept['Name'], ENT_QUOTES) ?></h1>
@@ -199,7 +199,7 @@ $notities = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </form>
     </main>
-    <?php include(__DIR__ . "/Includes/footer.php"); ?>
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 </html>

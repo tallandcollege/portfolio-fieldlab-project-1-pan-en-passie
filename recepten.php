@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/Includes/connection.php";
+include "includes/connection.php";
 $pdo = connect();
 ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $pdo = connect();
 </head>
 
 <body>
-<?php include(__DIR__ . "/Includes/header.php"); ?>
+<?php include("includes/header.php"); ?>
 
 <section class="recepten-section">
 
@@ -69,6 +69,6 @@ try {
 
 </section>
 
-<?php include(__DIR__ . "/Includes/footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 </body>
 </html>

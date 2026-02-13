@@ -1,5 +1,5 @@
 <?php 
-require_once(__DIR__ . "/Includes/connection.php");
+require_once('includes/connection.php');
 $pdo = connect();
 
 if (isset($_SESSION['user_id'])) {
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include("includes/header.php"); ?>
     <main class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <section class="login p-4 shadow rounded" aria-labelledby="login-title">
 
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             icon.classList.toggle('bi-eye-slash');
         });
     </script>
-    <?php include(__DIR__ . "/Includes/footer.php"); ?>
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 </html>

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include("includes/header.php"); ?>
     <main class="profile-main">
         <h1>Profielpagina</h1>
         <p>Welkom,
@@ -18,7 +18,7 @@
         </p>
         <a href="logout.php">Logout</a>
     </main>
-    <?php include(__DIR__ . "/Includes/footer.php"); ?>
+    <?php include("includes/footer.php"); ?>
 
 </body>
 
