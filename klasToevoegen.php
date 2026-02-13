@@ -1,5 +1,5 @@
 <?php
-include("Includes/connection.php");
+include(__DIR__ . "/Includes/connection.php");
 
 $errors = [];
 $success = false;
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <?php include("Includes/header.php") ?>
+    <?php include(__DIR__ . "/Includes/header.php") ?>
     <main>
 
 <section class="registratie-section" aria-labelledby="registratie-title">
@@ -139,6 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 </section>
 </main>
-<?php include("Includes/footer.php") ?>
+<?php include(__DIR__ . "/Includes/footer.php") ?>
 </body>
 </html>

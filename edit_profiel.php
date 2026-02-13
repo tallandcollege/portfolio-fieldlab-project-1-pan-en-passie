@@ -1,5 +1,5 @@
 <?php
-include_once('Includes/connection.php');
+include_once(__DIR__ . "/Includes/connection.php");
 
 $userid = $_SESSION['user_id'] ?? 0;
 if ($userid == 0) {
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include("includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
 
     <h2>Profiel bijwerken</h2>
 
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Opslaan</button>
     </form>
 
-    <?php include("includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 </body>
 
 </html>

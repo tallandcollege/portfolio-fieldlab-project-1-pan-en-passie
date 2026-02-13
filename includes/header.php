@@ -1,8 +1,10 @@
 <header>
-    <div class="talland-logo">
-        <img src="images\Placeholder Talland logo.png" alt="Talland Logo">
-    </div>
-    <?php include("zoek.php"); ?>
+    <a href="index.php">
+        <div class="talland-logo">
+            <img src="images\Placeholder Talland logo.png" alt="Talland Logo">
+        </div>
+    </a>
+    <?php include(__DIR__ . "/zoek.php"); ?>
     <div class="account-buttons">
         <?php
         if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {

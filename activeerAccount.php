@@ -10,7 +10,7 @@ if (isset($_GET['key'])) {
     exit;
 }
 
-$pdo = include 'includes/connection.php';
+$pdo = include __DIR__ . "/Includes/connection.php";
 
 $stmt = $pdo->prepare("SELECT * FROM nan_account WHERE UserKey = :UserKey");
 $stmt->execute([':UserKey' => $_SESSION['registration_key']]);
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include("includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
     <main class="registratie-main">
         <section class="registratie-section" aria-labelledby="registratie-title">
             <h1>Hallo, <?php echo htmlspecialchars($NaNAccount['username']); ?></h1>
@@ -249,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </section>
     </main>
-    <?php include 'includes/footer.php'; ?>
+    <?php include __DIR__ . "/Includes/footer.php"; ?>
 </body>
 
 </html>

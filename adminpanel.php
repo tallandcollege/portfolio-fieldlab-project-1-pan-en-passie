@@ -1,5 +1,5 @@
 <?php
- include_once('Includes/connection.php');
+ include_once(__DIR__ . "/Includes/connection.php");
     ob_start();
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         header("Location: index.php");
@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    <?php include("Includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
     <div class="admin-intro">
         <h1>Admin Paneel</h1>
         <p>Welkom,
@@ -44,10 +44,10 @@
         <?php endif; ?>
     </div>
     <section class="admin-section">
-        <?php include("Includes/AccountZoekWidget.php");
-        include("Includes/KlassenWidget.php"); ?>
+        <?php include(__DIR__ . "/Includes/AccountZoekWidget.php");
+        include(__DIR__ . "/Includes/KlassenWidget.php"); ?>
     </section>
-    <?php include("Includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 </body>
 
 </html>

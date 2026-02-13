@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    include 'Includes/connection.php';
+    include __DIR__ . "/Includes/connection.php";
 
     $stmt = $pdo->prepare("
     SELECT username, email
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         addErrorCode($errors, 'general', 'token_failed');
     }
 
-    $_SESSION['success'] = "https://localhost/portfolio-fieldlab-project-1-pan-en-passie/activeerAccount.php?key=" . rawurlencode($token);
+    $_SESSION['success'] = "https://st1736424645.splsites.nl/activeerAccount.php?key=" . rawurlencode($token);
     header("Location: chefToevoegen.php");
     exit;
 }
@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include("Includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
 
     <main class="registratie-main">
         <section class="registratie-section" aria-labelledby="registratie-title">
@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
 
-    <?php include("Includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 </body>
 
 </html>

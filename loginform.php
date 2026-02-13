@@ -1,5 +1,5 @@
 <?php
-include_once "includes/connection.php";
+include_once __DIR__ . "/Includes/connection.php";
 
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-    <?php include("includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
     <main class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <section class="login p-4 shadow rounded" aria-labelledby="login-title">
 
@@ -127,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             icon.classList.toggle('bi-eye-slash');
         });
     </script>
-    <?php include("Includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 <?php
 
-include_once("includes/connection.php");
+include_once(__DIR__ . "/Includes/connection.php");
 
 // Get user ID from URL or from session
 if (isset($_GET['id'])) {
@@ -41,7 +41,7 @@ $profileImage = $photo ? 'uploads/' . $photo['filename'] : null;
 </head>
 
 <body>
-    <?php include("includes/header.php"); ?>
+    <?php include(__DIR__ . "/Includes/header.php"); ?>
     <main class="profile-main">
         <h1>Profielpagina</h1>
         <p>Welkom,
@@ -62,7 +62,7 @@ $profileImage = $photo ? 'uploads/' . $photo['filename'] : null;
 
         <a href="logout.php">Logout</a>
     </main>
-    <?php include("includes/footer.php"); ?>
+    <?php include(__DIR__ . "/Includes/footer.php"); ?>
 
 </body>
 
