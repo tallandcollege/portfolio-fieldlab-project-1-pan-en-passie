@@ -437,7 +437,7 @@ footer p {
   padding: 10px;
   border: 3px solid var(--Background);
   font-weight: bold;
-  width:max-content;
+  width: max-content;
   color: black;
   text-decoration: none;
   background-color: lightgray;
@@ -479,7 +479,7 @@ footer p {
   flex-direction: row;
   color: black;
   text-decoration: none;
-  width:55vw;
+  width: 55vw;
   gap: 15px;
   padding: 10px;
   align-items: center;
@@ -577,8 +577,30 @@ footer p {
 
 .list {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+}
 
+.aantal {
+  width: 100px;
+}
+
+.eenheid {
+  width: 60px;
+  text-align: right;
+}
+
+.name {
+  flex: 1;
+  border-left: 1px solid #ccc;
+  padding-left: 15px;
+}
+
+@media (max-width: 720px) {
+  .name {
+    flex: 1;
+    border-left: 1px solid #ccc;
+    padding-left: 133px
+  }
 }
 
 .recipe-body {
@@ -1041,6 +1063,10 @@ textarea,
   gap: 20px;
 }
 
+img {
+  width: 100px;
+  height: 100px;
+}
 
 
 @media screen and (max-width: 1300px) {
@@ -1217,9 +1243,9 @@ textarea,
 
 .receptenstuk {
   padding: 20px;
-   border: 2px solid #b3b3b3;
+  border: 2px solid #b3b3b3;
   border-style: solid !important;
-    border-width: thin;
+  border-width: thin;
   border-radius: 20px;
   border-top: 0.5px solid #b3b3b3;
   border-bottom: 2.5px solid #b3b3b3;
@@ -1240,6 +1266,6 @@ textarea,
   color: #000 !important;
 }
 
-.receptentijd{
+.receptentijd {
   margin-top: 5px;
 }

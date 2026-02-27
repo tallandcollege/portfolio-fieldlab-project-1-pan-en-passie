@@ -1,15 +1,29 @@
-<form method="GET" action=".php">
-  <input name="search" type="text" id="zoekvak" placeholder="Zoek..." autocomplete="off">
+<form id="searchForm">
+  <input
+    name="search"
+    type="text"
+    id="zoekvak"
+    placeholder="Zoek..."
+    autocomplete="off">
 </form>
-<div id="resultaten" aria-live="polite" style="display:none;">
-  <iframe id="zoekresultaten" src="includes/zoekresultaten.php" sandbox="allow-same-origin allow-scripts allow-top-navigation"></iframe>
-</div>
+
+<div id="resultaten" aria-live="polite" style="display:none;"></div>
 
 <script>
   const input = document.getElementById("zoekvak");
   const resultaten = document.getElementById("resultaten");
-  const frame = document.getElementById("zoekresultaten");
   let t;
+
+  async function fetchResults(term) {
+    try {
+      const resp = await fetch('includes/zoekresultaten.php?term=' + encodeURIComponent(term));
+      if (!resp.ok) throw new Error('Network response was not ok');
+      const html = await resp.text();
+      resultaten.innerHTML = html;
+    } catch (err) {
+      resultaten.innerHTML = '<div class="leeg">Er is een fout opgetreden</div>';
+    }
+  }
 
   input.addEventListener("input", () => {
     clearTimeout(t);
@@ -18,14 +32,14 @@
 
     if (term === "") {
       resultaten.style.display = "none";
-      frame.src = "includes/zoekresultaten.php"; // optional: reset
+      resultaten.innerHTML = '';
       return;
     }
 
     resultaten.style.display = "block";
 
     t = setTimeout(() => {
-      frame.src = "includes/zoekresultaten.php?term=" + encodeURIComponent(input.value.trim());
+      fetchResults(term);
     }, 250);
   });
 </script>

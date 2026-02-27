@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/Includes/connect.php";
+include __DIR__ . "/Includes/connection.php";
 $conn = connect();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -23,7 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!is_array($instructions)) {
             $instructions = [$instructions];
         }
-        $instructionsJson = json_encode($instructions);
+        // Filter out empty instructions and join with newline
+        $instructions = array_filter(array_map('trim', $instructions));
+        $instructionsText = implode("\n", $instructions);
 
         $stmtCheck->execute([$_POST['namerecipe'], $description]);
         $existingRecipe = $stmtCheck->fetch(PDO::FETCH_ASSOC);
@@ -69,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ':user_id'      => $userID,
             ':name'         => $_POST['namerecipe'] ?? '',
             ':description'  => $description,
-            ':instructions' => $instructionsJson,
+            ':instructions' => $instructionsText,
             ':createdat'    => date('Y-m-d H:i:s')
         ]);
 
@@ -84,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmtCheckMaterial  = $conn->prepare($checkMaterialQuery);
             $stmtInsertMaterial = $conn->prepare($insertMaterialQuery);
 
-            $insertRecipeMaterialQuery = "INSERT INTO recipe_material (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
+            $insertRecipeMaterialQuery = "INSERT INTO recipematerial (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
             $stmtRecipeMaterial = $conn->prepare($insertRecipeMaterialQuery);
 
             foreach ($_POST['materiaal'] as $materiaalName) {
@@ -113,11 +115,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ========================== */
         if (!empty($_POST['ingredient_name'])) {
             $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
-            $insertIngredientQuery = "INSERT INTO ingredient (name, category_id) VALUES (:name, :cat_id)";
+            $insertIngredientQuery = "INSERT INTO ingredient (name, categoryid) VALUES (:name, :cat_id)";
             $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
             $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
 
-            $queryRecipeIngredient = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)";
+            $queryRecipeIngredient = "INSERT INTO recipeingredient (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)";
             $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
 
             foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
@@ -167,31 +169,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         /* ==========================
             FOTO TOEVOEGEN
         ========================== */
-        if (isset($_FILES['photo'])) {
-            // Gebruik de zojuist aangemaakte recipe ID
-            $name     = $_FILES['photo']['name'];
-            $tmpName  = $_FILES['photo']['tmp_name'];
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $uploadsDir = __DIR__ . '/uploads';
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0755, true);
+            }
 
-            // Lees het bestand als binaire data
-            $imageData = file_get_contents($tmpName);
+            $fileExtension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                $newFileName = 'recipe_' . $recipeID . '_' . time() . '.' . $fileExtension;
 
-            try {
-                $query = "INSERT INTO photos (user_id, recipe_id, name, image) 
-                  VALUES (:user_id, :recipe_id, :name, :image)";
-
-                $stmt = $conn->prepare($query);
-                $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
-                $stmt->bindParam(':recipe_id', $recipeID, PDO::PARAM_INT);
-                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-                $stmt->bindParam(':image', $imageData, PDO::PARAM_LOB);
-
-                $stmt->execute();
-            } catch (Exception $e) {
-                echo "Fout bij uploaden: " . $e->getMessage();
+                if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadsDir . '/' . $newFileName)) {
+                    $query = "INSERT INTO photo (user_id, recipe_id, filename, uploaded_at) 
+                      VALUES (:user_id, :recipe_id, :filename, :uploaded_at)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute([
+                        ':user_id' => $userID,
+                        ':recipe_id' => $recipeID,
+                        ':filename' => $newFileName,
+                        ':uploaded_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
             }
         }
-
-
         $conn->commit();
 
         // Pop-up succes en redirect naar recept pagina
@@ -303,9 +303,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button type="button" class="recipe-submit" onclick="addIngredient()">Ingrediënt toevoegen</button>
 
                 <label class="form-label">Instructies</label>
-                <ul id="instruction-list">
-                    <li class="instruction-item">
-                        <textarea name="instruction[]"></textarea>
+                <ul id="instruction-list" style="list-style: none; padding: 0;">
+                    <li class="instruction-item" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                        <span class="step-number" style="font-weight: bold; min-width: 30px;">1.</span>
+                        <input name="instruction[]" type="text" placeholder="Instructie 1" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
                         <button type="button" onclick="removeItem(this)">❌</button>
                     </li>
                 </ul>
@@ -368,13 +369,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         function addInstruction() {
+            const instructionList = document.getElementById("instruction-list");
+            const itemCount = instructionList.children.length + 1;
             const li = document.createElement("li");
             li.className = "instruction-item";
+            li.style.cssText = "display: flex; gap: 10px; margin-bottom: 10px; align-items: center;";
             li.innerHTML = `
-            <textarea name="instruction[]"></textarea>
-            <button type="button" onclick="removeItem(this)">❌</button>
+            <span class="step-number" style="font-weight: bold; min-width: 30px;">${itemCount}.</span>
+            <input name="instruction[]" type="text" placeholder="Instructie ${itemCount}" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+            <button type="button" onclick="removeItem(this); updateInstructionNumbers()">❌</button>
         `;
-            document.getElementById("instruction-list").appendChild(li);
+            instructionList.appendChild(li);
         }
 
         function addMateriaal() {
@@ -388,7 +393,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         function removeItem(button) {
-            button.closest("li").remove();
+            const li = button.closest("li");
+            const instructionList = document.getElementById("instruction-list");
+            const isInstructionItem = instructionList && instructionList.contains(li);
+            li.remove();
+            if (isInstructionItem) {
+                updateInstructionNumbers();
+            }
+        }
+
+        function updateInstructionNumbers() {
+            const instructionList = document.getElementById("instruction-list");
+            const items = instructionList.querySelectorAll(".instruction-item");
+            items.forEach((item, index) => {
+                const stepNumber = item.querySelector(".step-number");
+                const input = item.querySelector('input[name="instruction[]"]');
+                const newNumber = index + 1;
+                stepNumber.textContent = newNumber + ".";
+                input.placeholder = "Instructie " + newNumber;
+            });
         }
 
         // NAAAR SMAAK TOGGLE
