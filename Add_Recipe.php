@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/Includes/connect.php";
+include  "includes/connect.php";
 $conn = connect();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -252,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include("/Includes/header.php"); ?>
 
     <div id="popup-message" class="popup-message"></div>
 
@@ -327,7 +327,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </section>
     </main>
 
-    <?php include(__DIR__ . "/Includes/footer.php"); ?>
+    <?php include("/Includes/footer.php"); ?>
 
     <script>
         // POPUP FUNCTIE
