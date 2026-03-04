@@ -4,7 +4,7 @@
             <img src="images\Placeholder Talland logo.png" alt="Talland Logo">
         </div>
     </a>
-    <?php include("/zoek.php"); ?>
+    <?php include("zoek.php"); ?>
     <div class="account-buttons">
         <?php
         if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
