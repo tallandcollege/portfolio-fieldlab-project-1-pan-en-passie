@@ -11,7 +11,9 @@
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <header>
+    <?php include("includes/header.php"); ?>
+    </header>
     <section class="title-section">
         <h1>Pan<br>en<br>Passie</h1>
         <a href="Add_recipe.php">Aan de slag</a>
@@ -36,7 +38,7 @@
             </div>
         </div>
     </section>
-    <?php include __DIR__ . "/Includes/footer.php"; ?>
+    <?php include ("includes/footer.php"); ?>
 </body>
 
 </html>
