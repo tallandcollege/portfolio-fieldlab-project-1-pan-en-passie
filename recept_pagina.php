@@ -13,7 +13,7 @@ $stmt = $pdo->prepare("SELECT id, name, description, instructions
 $stmt->execute([$recipeid]);
 $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$steps = explode("\n", $recipe['Instructions']);
+$steps = explode("\n", $recipe['instructions']);
 
 
 $stmt = $pdo->prepare("
@@ -94,19 +94,11 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <h2>Ingredienten</h2>
                 <ul class="ingredients">
                     <?php foreach ($ingredient as $ing): ?>
-                        <li class="list">
-
-                            <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
-
-                            <div class="aantal"> <?= htmlspecialchars($ing['Aantal']) ?></div>
-                            <hr>
-                            <div class="eenheid"> <?= htmlspecialchars($ing['Eenheid']) ?></div>
-
-
-                            <hr>
-                            <div class="name"><?= htmlspecialchars($ing['name']) ?></div>
+                        <li class="list" style="display: flex; justify-content: space-between; gap: 15px;">
+                            <div class="aantal" style="flex: 0 0 60px; text-align: right;"><?= htmlspecialchars($ing['Aantal']) ?></div>
+                            <div class="eenheid" style="flex: 0 0 80px;"><?= htmlspecialchars($ing['Eenheid']) ?></div>
+                            <div class="name" style="flex: 1;"><?= htmlspecialchars($ing['name']) ?></div>
                         </li>
-
                     <?php endforeach; ?>
                 </ul>
 
