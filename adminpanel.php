@@ -1,5 +1,5 @@
 <?php
- include_once( "includes/connection.php");
+ include_once("Includes/connection.php");
     ob_start();
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         header("Location: index.php");
@@ -14,7 +14,6 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +22,7 @@
 </head>
 
 <body>
-    <?php include( " includes/header.php"); ?>
+    <?php include("Includes/header.php"); ?>
     <div class="admin-intro">
         <h1>Admin Paneel</h1>
         <p>Welkom,
@@ -44,10 +43,10 @@
         <?php endif; ?>
     </div>
     <section class="admin-section">
-        <?php include( " includes/AccountZoekWidget.php");
-        include( " includes/KlassenWidget.php"); ?>
+        <?php include("Includes/AccountZoekWidget.php");
+        include("Includes/KlassenWidget.php"); ?>
     </section>
-    <?php include( " includes/footer.php"); ?>
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 </html>

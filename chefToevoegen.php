@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include("Includes/header.php"); ?>
 
     <main class="registratie-main">
         <section class="registratie-section" aria-labelledby="registratie-title">
