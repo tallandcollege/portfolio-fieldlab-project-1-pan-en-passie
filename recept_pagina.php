@@ -31,7 +31,7 @@ $ingredient = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 $photoStmt = $pdo->prepare("
-    SELECT filename FROM photo
+    SELECT id, image, mime_type FROM photo
     WHERE recipe_id = :recipe_id
     ORDER BY uploaded_at DESC
     LIMIT 1
@@ -39,7 +39,11 @@ $photoStmt = $pdo->prepare("
 $photoStmt->execute([':recipe_id' => $recipeid]);
 $photo = $photoStmt->fetch(PDO::FETCH_ASSOC);
 
-$recipeImage = $photo ? 'uploads/' . $photo['filename'] : null;
+$recipeImage = null;
+if ($photo && $photo['image']) {
+    $imageData = base64_encode($photo['image']);
+    $recipeImage = 'data:' . ($photo['mime_type'] ?? 'image/jpeg') . ';base64,' . $imageData;
+}
 
 
 

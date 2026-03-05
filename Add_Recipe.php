@@ -1,5 +1,5 @@
 <?php
-include  "includes/connect.php";
+include  "includes/connection.php";
 $conn = connect();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -167,30 +167,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         /* ==========================
-            FOTO TOEVOEGEN
+            FOTO TOEVOEGEN (LONGBLOB)
         ========================== */
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $uploadsDir = __DIR__ . '/uploads';
-            if (!is_dir($uploadsDir)) {
-                mkdir($uploadsDir, 0755, true);
+            $tmpName = $_FILES['photo']['tmp_name'];
+            $originalName = $_FILES['photo']['name'];
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $tmpName);
+            finfo_close($finfo);
+
+            $allowed = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!in_array($mime_type, $allowed)) {
+                throw new Exception('Ongeldig afbeeldingsformaat. Alleen JPG/PNG/GIF toegestaan.');
             }
 
-            $fileExtension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-            if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                $newFileName = 'recipe_' . $recipeID . '_' . time() . '.' . $fileExtension;
-
-                if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadsDir . '/' . $newFileName)) {
-                    $query = "INSERT INTO photo (user_id, recipe_id, filename, uploaded_at) 
-                      VALUES (:user_id, :recipe_id, :filename, :uploaded_at)";
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute([
-                        ':user_id' => $userID,
-                        ':recipe_id' => $recipeID,
-                        ':filename' => $newFileName,
-                        ':uploaded_at' => date('Y-m-d H:i:s')
-                    ]);
-                }
+            $imageData = file_get_contents($tmpName);
+            if ($imageData === false) {
+                throw new Exception('Kon afbeelding niet lezen');
             }
+
+            $query = "INSERT INTO photo (user_id, recipe_id, filename, mime_type, image, uploaded_at)
+                      VALUES (:user_id, :recipe_id, :filename, :mime_type, :image, :uploaded_at)";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
+            $stmt->bindParam(':recipe_id', $recipeID, PDO::PARAM_INT);
+            $stmt->bindParam(':filename', $originalName, PDO::PARAM_STR);
+            $stmt->bindParam(':mime_type', $mime_type, PDO::PARAM_STR);
+            $stmt->bindParam(':image', $imageData, PDO::PARAM_LOB);
+            $stmt->bindValue(':uploaded_at', date('Y-m-d H:i:s'));
+            $stmt->execute();
         }
         $conn->commit();
 
@@ -252,7 +258,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 
 <body>
-    <?php include("/Includes/header.php"); ?>
+    <?php include("includes/header.php"); ?>
 
     <div id="popup-message" class="popup-message"></div>
 
@@ -274,7 +280,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </li>
                 </ul>
                 <button type="button" class="recipe-submit" onclick="addMateriaal()">Materiaal toevoegen</button>
-
+                <?php var_dump(defined('PDO::MYSQL_ATTR_MAX_BUFFER_SIZE')); ?>
                 <label class="form-label">Ingrediënten</label>
                 <ul id="ingredienten">
                     <li class="ingredient-item">
@@ -328,7 +334,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </section>
     </main>
 
-    <?php include("/Includes/footer.php"); ?>
+    <?php include("includes/footer.php"); ?>
 
     <script>
         // POPUP FUNCTIE

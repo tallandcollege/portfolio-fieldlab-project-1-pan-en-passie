@@ -16,7 +16,7 @@
     </header>
     <section class="title-section">
         <h1>Pan<br>en<br>Passie</h1>
-        <a href="Add_recipe.php">Aan de slag</a>
+        <a href="Add_Recipe.php">Aan de slag</a>
     </section>
     <section class="info-section">
         <div>

@@ -3,23 +3,25 @@ session_start();
 
 function connect(): PDO
 {
-    // $host = 'localhost';
-    // $dbname = 'pan_en_passie';
-    // $username = 'bit_academy';
-    // $password = 'bit_academy';
-    // $charset = 'utf8mb4';
-
     $host = 'localhost';
-    $dbname = 'st1736424645';
-    $username = 'st1736424645';
-    $password = 'ESibH2t4CMYubiw';
+    $dbname = 'pan_en_passie';
+    $username = 'bit_academy';
+    $password = 'bit_academy';
     $charset = 'utf8mb4';
+
+    // $host = 'localhost';
+    // $dbname = 'st1736424645';
+    // $username = 'st1736424645';
+    // $password = 'ESibH2t4CMYubiw';
+    // $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
 
     $pdo = new PDO($dsn, $username, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        // Disable emulated prepares to allow native LOB streaming
+        PDO::ATTR_EMULATE_PREPARES => false,
     ]);
 
     return $pdo;
