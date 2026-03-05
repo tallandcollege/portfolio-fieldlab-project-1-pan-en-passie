@@ -172,7 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         addErrorCode($errors, 'general', 'token_failed');
     }
 
-    $_SESSION['success'] = "https://st1736424645.splsites.nl/activeerAccount.php?key=" . rawurlencode($token);
+    // $_SESSION['success'] = "https://st1736424645.splsites.nl/activeerAccount.php?key=" . rawurlencode($token);
+    $_SESSION['success'] = "https://localhost/activeerAccount.php?key=" . rawurlencode($token);
     header("Location: chefToevoegen.php");
     exit;
 }

@@ -1,6 +1,5 @@
 <?php
-include  "includes/connection.php";
-$conn = connect();
+include_once("Includes/connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     error_log("DEBUG: POST received");

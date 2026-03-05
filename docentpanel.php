@@ -1,13 +1,13 @@
-<?php session_start();
+<?php
+include_once("Includes/connection.php");
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'docent') {
     header("Location: index.php");
     exit;
 }
 
-$pdo = require_once(__DIR__ . "/Includes/connection.php");
-
 // Haal alle recepten op
-$stmt = $pdo->query("
+$recipes = fetchData("
     SELECT r.id, r.name AS naam, GROUP_CONCAT(i.Name SEPARATOR ', ') AS ingredienten, '' AS foto
     FROM recipe r
     LEFT JOIN recipeingredient ri ON r.id = ri.`recipe_id`
@@ -15,8 +15,6 @@ $stmt = $pdo->query("
     GROUP BY r.id
     ORDER BY r.name ASC
 ");
-$recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 $fotopad = 'fotos/';
 
 ?>

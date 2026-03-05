@@ -523,7 +523,7 @@ INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `email`, `passwo
 (2, 'Lucas', 'Visser', 'L.Visser', '444444@student.talland.nl', '$2y$10$cO77V0O/Ensd9WdECPa83.YlOC9PM6du/fO12jkje6.VIG3tbLtXy', 1),
 (4, 'Bart', 'Gielens', 'Bart.Gielens', 'b.gielens@talland.nl', '$2y$10$W3NDrOabT9I2alg3AIylBOkJBOBzcnaX5US5BHKEwPOBCdUyhCy8.', 2),
 (6, 'Timo', 'Munts', 'Timo.Munts', 't.munts@talland.nl', '$2y$10$q4v8rY9lrvnu8nzyHxj1ROTNvv4Qvc.tJoc4IuN.buySwEr6/4Hv.', 2),
-(8, 'Docent', 'Docent', 'Docent', 'docent@docent.nl', '$2y$10$PDPQt7qBvIWAwCSb2Wd.x.ELWJwhZR0Sbb5pHX9GTp936aSiEjriG', 2);
+(8, 'docent', 'docent', 'docent', 'docent@docent.nl', '$2y$10$TV6/P2U8zrYCxvW5MTPYB.ZZrczRx.gE.qNu6ETBS1XJCH44adeBy', 2);
 
 --
 -- Indexen voor geëxporteerde tabellen
