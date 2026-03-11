@@ -1,12 +1,12 @@
 <?php
-include_once("Includes/connection.php");
-
+include_once("includes/connection.php");
+$data = fetchData("SELECT * FROM users WHERE role_id = :role", [':role' => 2]);
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     error_log("DEBUG: POST received");
     error_log("DEBUG: POST data: " . print_r($_POST, true));
 
     try {
-        $conn->beginTransaction();
+        $pdo->beginTransaction();
 
         // Valideer required velden
         if (empty($_POST['namerecipe'])) {
@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Check of recept al bestaat (duplicate prevention)
         $checkDuplicateQuery = "SELECT id FROM recipe WHERE name = ? AND description = ? LIMIT 1";
-        $stmtCheck = $conn->prepare($checkDuplicateQuery);
+        $stmtCheck = $pdo->prepare($checkDuplicateQuery);
 
         $description = $_POST['recipe_description'] ?? '';
         $instructions = $_POST['instruction'] ?? [];
@@ -31,8 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($existingRecipe) {
             // Rol terug en toon een popup in de browser (of fallback naar alert), daarna redirect naar Add_Recipe
-            if ($conn->inTransaction()) {
-                $conn->rollBack();
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
             }
             echo "<script>
                 window.addEventListener('load', function(){
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             VALUES (:user_id, :name, :description, :instructions, :createdat)
         ";
 
-        $stmtRecipe = $conn->prepare($queryRecipe);
+        $stmtRecipe = $pdo->prepare($queryRecipe);
 
         $stmtRecipe->execute([
             ':user_id'      => $userID,
@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ':createdat'    => date('Y-m-d H:i:s')
         ]);
 
-        $recipeID = $conn->lastInsertId();
+        $recipeID = $pdo->lastInsertId();
 
         /* ==========================
            MATERIALEN VERWERKEN
@@ -82,11 +82,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!empty($_POST['materiaal'])) {
             $checkMaterialQuery = "SELECT id FROM material WHERE name = :name LIMIT 1";
             $insertMaterialQuery = "INSERT INTO material (name) VALUES (:name)";
-            $stmtCheckMaterial  = $conn->prepare($checkMaterialQuery);
-            $stmtInsertMaterial = $conn->prepare($insertMaterialQuery);
+            $stmtCheckMaterial  = $pdo->prepare($checkMaterialQuery);
+            $stmtInsertMaterial = $pdo->prepare($insertMaterialQuery);
 
             $insertRecipeMaterialQuery = "INSERT INTO recipematerial (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
-            $stmtRecipeMaterial = $conn->prepare($insertRecipeMaterialQuery);
+            $stmtRecipeMaterial = $pdo->prepare($insertRecipeMaterialQuery);
 
             foreach ($_POST['materiaal'] as $materiaalName) {
                 $materiaalName = trim($materiaalName);
@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 if (!$materiaal) {
                     $stmtInsertMaterial->execute([':name' => $materiaalName]);
-                    $materiaalID = $conn->lastInsertId();
+                    $materiaalID = $pdo->lastInsertId();
                 } else {
                     $materiaalID = $materiaal['id'];
                 }
@@ -115,11 +115,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!empty($_POST['ingredient_name'])) {
             $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
             $insertIngredientQuery = "INSERT INTO ingredient (name, categoryid) VALUES (:name, :cat_id)";
-            $stmtCheckIngredient  = $conn->prepare($checkIngredientQuery);
-            $stmtInsertIngredient = $conn->prepare($insertIngredientQuery);
+            $stmtCheckIngredient  = $pdo->prepare($checkIngredientQuery);
+            $stmtInsertIngredient = $pdo->prepare($insertIngredientQuery);
 
             $queryRecipeIngredient = "INSERT INTO recipeingredient (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)";
-            $stmtRecipeIngredient = $conn->prepare($queryRecipeIngredient);
+            $stmtRecipeIngredient = $pdo->prepare($queryRecipeIngredient);
 
             foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
                 $ingredientName = trim($ingredientName);
@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         ':name'   => $ingredientName,
                         ':cat_id' => 18
                     ]);
-                    $ingredientID = $conn->lastInsertId();
+                    $ingredientID = $pdo->lastInsertId();
                 } else {
                     $ingredientID = $ingredient['id'];
                 }
@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 INSERT INTO aanvulling (Recipe_id, description)
                 VALUES (:recipe_id, :description)
             ";
-            $stmtAanvulling = $conn->prepare($queryAanvulling);
+            $stmtAanvulling = $pdo->prepare($queryAanvulling);
             $stmtAanvulling->execute([
                 ':recipe_id'  => $recipeID,
                 ':description' => $_POST['aanvullingen']
@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $query = "INSERT INTO photo (user_id, recipe_id, filename, mime_type, image, uploaded_at)
                       VALUES (:user_id, :recipe_id, :filename, :mime_type, :image, :uploaded_at)";
-            $stmt = $conn->prepare($query);
+            $stmt = $pdo->prepare($query);
             $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
             $stmt->bindParam(':recipe_id', $recipeID, PDO::PARAM_INT);
             $stmt->bindParam(':filename', $originalName, PDO::PARAM_STR);
@@ -197,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->bindValue(':uploaded_at', date('Y-m-d H:i:s'));
             $stmt->execute();
         }
-        $conn->commit();
+        $pdo->commit();
 
         // Pop-up succes en redirect naar recept pagina
         echo "<script>
@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }, 2000);
         </script>";
     } catch (Exception $e) {
-        $conn->rollBack();
+        $pdo->rollBack();
         $error = $e->getMessage();
         error_log("Add_Recipe Error: " . $error);
         echo "<script>showPopup('Fout: " . addslashes($error) . "', 'error');</script>";
@@ -267,7 +267,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <label class="form-label">Naam recept</label>
                 <input name="namerecipe" required>
-
+                <select name="difficulty">
+                    <option value="Beginner">Beginner ☆☆☆</option>
+                    <option value="Makkelijk">Makkelijk ⭐☆☆</option>
+                    <option value="Gemiddeld">Gemiddeld ⭐⭐☆</option>
+                    <option value="Gevorderd">Gevorderd ⭐⭐⭐</option>
+                </select>
                 <label class="form-label">Beschrijving</label>
                 <textarea name="recipe_description"></textarea>
 
@@ -279,7 +284,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </li>
                 </ul>
                 <button type="button" class="recipe-submit" onclick="addMateriaal()">Materiaal toevoegen</button>
-                <?php var_dump(defined('PDO::MYSQL_ATTR_MAX_BUFFER_SIZE')); ?>
                 <label class="form-label">Ingrediënten</label>
                 <ul id="ingredienten">
                     <li class="ingredient-item">
