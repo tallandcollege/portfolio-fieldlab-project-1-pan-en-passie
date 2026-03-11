@@ -60,8 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $queryRecipe = "
             INSERT INTO recipe 
-            (user_id, name, description, instructions, createdat)
-            VALUES (:user_id, :name, :description, :instructions, :createdat)
+            (user_id, name, description, instructions, createdat, Sterren)
+            VALUES (:user_id, :name, :description, :instructions, :createdat, :Sterren)
         ";
 
         $stmtRecipe = $pdo->prepare($queryRecipe);
@@ -71,7 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ':name'         => $_POST['namerecipe'] ?? '',
             ':description'  => $description,
             ':instructions' => $instructionsText,
-            ':createdat'    => date('Y-m-d H:i:s')
+            ':createdat'    => date('Y-m-d H:i:s'),
+            ':Sterren' => $_POST['Sterren']
         ]);
 
         $recipeID = $pdo->lastInsertId();
@@ -267,11 +268,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <label class="form-label">Naam recept</label>
                 <input name="namerecipe" required>
-                <select name="difficulty">
-                    <option value="Beginner">Beginner ☆☆☆</option>
-                    <option value="Makkelijk">Makkelijk ⭐☆☆</option>
-                    <option value="Gemiddeld">Gemiddeld ⭐⭐☆</option>
-                    <option value="Gevorderd">Gevorderd ⭐⭐⭐</option>
+                <select name="Sterren" required>
+                    <option value="Beginner ☆☆☆">Beginner ☆☆☆</option>
+                    <option value="Makkelijk ⭐☆☆">Makkelijk ⭐☆☆</option>
+                    <option value="Gemiddeld ⭐⭐☆">Gemiddeld ⭐⭐☆</option>
+                    <option value="Moeilijk ⭐⭐⭐">Moeilijk ⭐⭐⭐</option>
                 </select>
                 <label class="form-label">Beschrijving</label>
                 <textarea name="recipe_description"></textarea>
