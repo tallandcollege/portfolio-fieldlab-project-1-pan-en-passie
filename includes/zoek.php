@@ -1,5 +1,5 @@
 <div class="search-shell" id="searchShell">
-  <form id="searchForm" role="search">
+  <form id="searchForm" role="search" action="recepten.php">
     <span class="search-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.43 4.44 1.41-1.42-4.43-4.43A6.5 6.5 0 0 0 10.5 4zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z" />

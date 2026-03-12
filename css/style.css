@@ -1214,6 +1214,10 @@ textarea,
   }
 }
 
+.addRecipe-section input, select {
+  margin-bottom: 10px;
+}
+
 /* INGREDIENT ROW LAYOUT */
 .ingredient-item {
   display: grid;
