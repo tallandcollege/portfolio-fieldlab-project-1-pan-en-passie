@@ -13,7 +13,7 @@ $pdo = connect();
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
+    <?php include "includes/header.php"; ?>
 
     <section class="recepten-section">
 

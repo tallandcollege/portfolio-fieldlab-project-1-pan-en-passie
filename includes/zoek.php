@@ -1,10 +1,10 @@
-<form id="searchForm">
-  <input
-    name="search"
-    type="text"
-    id="zoekvak"
-    placeholder="Zoek..."
-    autocomplete="off">
+<form id="searchForm" method="GET" action="recepten.php">
+    <input
+        name="search"
+        type="text"
+        id="zoekvak"
+        placeholder="Zoek..."
+        autocomplete="off">
 </form>
 
 <div id="resultaten" aria-live="polite" style="display:none;"></div>
