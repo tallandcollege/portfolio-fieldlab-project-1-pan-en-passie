@@ -78,21 +78,34 @@ $notes = fetchData("
         <br>
         <div class="recipe-body">
             <div class="left-column">
+
                 <?php if ($recipeImage): ?>
-                    <img style="    height: 100px;" src="<?= htmlspecialchars($recipeImage) ?>" alt="<?= htmlspecialchars($recipe['name']) ?>">
-                <?php endif; ?>
-                <?php if (!empty($notes)): ?>
+                    <div class="img-container">
+                        <img src="<?= htmlspecialchars($recipeImage) ?>" alt="<?= htmlspecialchars($recipe['name']) ?>">
+                    </div>
                 <?php endif; ?>
                 <h1><?= htmlspecialchars($recipe['name']) ?></h1>
+
+                <?php if ($recipe['Sterren']): ?>
+                    <h3><?= htmlspecialchars($recipe['Sterren']) ?></h3>
+                    <p>Gemaakt door: <?= htmlspecialchars($recipe['username'] ?? 'Onbekend') ?></p>
+
+                <?php endif; ?>
+                <?php if (!empty($notes)): ?>
+                    <div class="recipe-notes">
+                        <?php foreach ($notes as $note): ?>
+                            <p><?= htmlspecialchars($note['description']) ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="right-column">
                 <span>
-                    <?php foreach ($notes as $note): ?>
-                        <p><?= htmlspecialchars($note['description']) ?></p>
-                        <p>Gemaakt door: <?= htmlspecialchars($recipe['username'] ?? 'Onbekend') ?></p>
-                        <br>
-                        <h6><?= htmlspecialchars($recipe['Sterren']) ?></h6>
-                    <?php endforeach; ?>
+                    <p class="recipe-desc">
+                        <?php if (!empty($recipe['description'])): ?>
+                            <?= nl2br(htmlspecialchars($recipe['description'])) ?>
+                        <?php endif; ?>
+                    </p>
                 </span>
                 <span>
                     <table>
@@ -123,16 +136,18 @@ $notes = fetchData("
                         <?php endforeach; ?>
                     </ol>
                 </span>
+                <?php if (!empty($notes)): ?>
+                    <div class="recipe-notes-responsive-copy">
+                        <?php foreach ($notes as $note): ?>
+                            <p><?= htmlspecialchars($note['description']) ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
         </div>
     </div>
-    <div class="recipe-notes">
-        <?php foreach ($notes as $note): ?>
-            <p><?= htmlspecialchars($note['description']) ?></p>
-        <?php endforeach; ?>
-    </div>
-    <?php include __DIR__ . "/Includes/footer.php"; ?>
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 </html>

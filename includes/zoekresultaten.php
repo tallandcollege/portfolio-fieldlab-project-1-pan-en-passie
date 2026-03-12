@@ -19,7 +19,28 @@ if (isset($_GET['term'])) {
     }
 
     $like = "%{$term}%";
-    $stmt = $pdo->prepare("SELECT r.id, r.name as naam, GROUP_CONCAT(i.Name SEPARATOR ', ') as ingredienten, p.filename as foto FROM recipe r LEFT JOIN recipeingredient ri ON r.id = ri.`recipe_id` LEFT JOIN ingredient i ON ri.`ingredient_id` = i.id LEFT JOIN photo p ON r.id = p.recipe_id WHERE r.name LIKE :term GROUP BY r.id LIMIT 10");
+    $stmt = $pdo->prepare("
+        SELECT 
+            r.id,
+            r.name AS naam,
+            GROUP_CONCAT(i.Name SEPARATOR ', ') AS ingredienten,
+            p.image AS foto_blob,
+            p.mime_type,
+            p.filename AS foto_bestand
+        FROM recipe r
+        LEFT JOIN recipeingredient ri ON r.id = ri.recipe_id
+        LEFT JOIN ingredient i ON ri.ingredient_id = i.id
+        LEFT JOIN photo p ON p.id = (
+            SELECT p2.id
+            FROM photo p2
+            WHERE p2.recipe_id = r.id
+            ORDER BY p2.uploaded_at DESC, p2.id DESC
+            LIMIT 1
+        )
+        WHERE r.name LIKE :term
+        GROUP BY r.id, r.name, p.image, p.mime_type, p.filename
+        LIMIT 10
+    ");
     $stmt->execute(['term' => $like]);
     $rows = $stmt->fetchAll();
 
@@ -27,9 +48,15 @@ if (isset($_GET['term'])) {
         $naam = htmlspecialchars($resultaten['naam'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $ing  = htmlspecialchars($resultaten['ingredienten'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        $recipeImage = !empty($resultaten['foto'])
-            ? htmlspecialchars('uploads/' . $resultaten['foto'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
-            : 'images/placeholder.png';
+        if (!empty($resultaten['foto_blob'])) {
+            $recipeImage = 'data:' . ($resultaten['mime_type'] ?? 'image/jpeg') . ';base64,' . base64_encode($resultaten['foto_blob']);
+        } elseif (!empty($resultaten['foto_bestand'])) {
+            $recipeImage = 'uploads/' . rawurlencode($resultaten['foto_bestand']);
+        } else {
+            $recipeImage = 'images/placeholder.png';
+        }
+
+        $recipeImage = htmlspecialchars($recipeImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         // links are relative to the page including the search results (header), so no ../ needed
         echo "<a href='recept_pagina.php?id={$resultaten['id']}'>

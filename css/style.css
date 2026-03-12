@@ -118,6 +118,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 5px;
   width: 100%;
   height: 7vh;
 }
@@ -125,13 +126,15 @@ header {
 .talland-logo {
   display: flex;
   align-items: center;
-  max-width: 70px;
-  height: auto;
+  width: 70px;
+  height: 70px;
+  flex: 0 0 70px;
 }
 
 .talland-logo img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .search-shell {
@@ -641,13 +644,24 @@ footer p {
 
 .recipe-body {
   display: flex;
-  gap: 16px;
+  gap: 10%;
   padding: 20px;
 }
 
 .left-column {
-  width: 50%;
-  font-size: 0.92rem;
+  width: 40%;
+}
+
+.left-column .img-container {
+    width: 100%;
+    height: auto;
+}
+
+.left-column .img-container img {
+    border-radius: 20px;
+    width: 100%;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .right-column {
@@ -657,8 +671,12 @@ footer p {
   justify-content: space-between;
   width: 50%;
   min-height: 100vh;
-  gap: 20px;
+  gap: 40px;
   font-size: 0.92rem;
+}
+
+.right-column .recipe-desc {
+  font-size: 17px;
 }
 
 .right-column span {
@@ -679,7 +697,7 @@ footer p {
 }
 
 .right-column td:nth-child(2) {
-  width: 10% !important;
+  width: 15% !important;
   border-left: 3px solid var(--Talland-groen);
   border-right: 3px solid var(--Talland-groen);
 }
@@ -692,14 +710,43 @@ footer p {
 }
 
 .steps {
-  padding-left: 20px;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0px 0px 20px;
+  gap: 10px;
 }
 
 .steps li {
-  margin-bottom: 8px;
   color: #555;
   line-height: 1.4;
+}
+
+.recipe-notes,
+.recipe-notes-responsive-copy {
+  margin-top: 28px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 55, 61, 0.12);
+  border-left: 4px solid var(--UI);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 55, 61, 0.06);
+}
+
+.recipe-notes p,
+.recipe-notes-responsive-copy p {
+  font-size: 17px;
+  line-height: 1.5;
+  color: #385154;
+  margin: 0;
+}
+
+.recipe-notes p + p,
+.recipe-notes-responsive-copy p + p {
+  margin-top: 10px;
+}
+
+.recipe-notes-responsive-copy {
+  display: none;
 }
 
 .docent-iframe {
@@ -912,15 +959,6 @@ label {
 
 
 @media screen and (max-width: 480px) {
-  .recipe-body {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .left-column,
-  .right-column {
-    width: 100% !important;
-  }
 
   .recipe-card {
     margin: 10px;
@@ -934,6 +972,26 @@ label {
 
   .recipe-image {
     height: 180px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .recipe-body {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .left-column,
+  .right-column {
+    width: 100% !important;
+  }
+
+  .recipe-notes {
+    display: none;
+  }
+
+  .recipe-notes-responsive-copy {
+    display: block;
   }
 }
 
@@ -1114,7 +1172,7 @@ textarea,
   gap: 20px;
 }
 
-img {
+.profile-main {
   width: 100px;
   height: 100px;
 }
@@ -1133,18 +1191,26 @@ img {
 }
 
 @media screen and (max-width: 419px) {
-  .talland-logo {
-    display: none;
-  }
-
-  .search-shell {
-    width: 100%;
-  }
 
   header {
     height: auto;
-    padding: 10px;
-    gap: 5px;
+    padding: 10px 5px;
+  }
+
+  .search-shell {
+    width: min(100%, 520px);
+  }
+
+  #resultaten {
+    width: 95vw;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media screen and (max-width: 520px) {
+  header .talland-logo {
+    display: none;
   }
 }
 
