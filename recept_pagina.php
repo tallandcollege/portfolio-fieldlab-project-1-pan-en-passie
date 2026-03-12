@@ -7,9 +7,12 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 include_once(__DIR__ . "/Includes/connection.php");
 
-$stmt = $pdo->prepare("SELECT id, name, description, instructions
-    FROM recipe
-    WHERE id = ?");
+$stmt = $pdo->prepare("
+    SELECT r.id, r.name, r.description, r.instructions, r.Sterren, u.username
+    FROM recipe r
+    LEFT JOIN users u ON r.User_id = u.id
+    WHERE r.id = ?
+");
 $stmt->execute([$recipeid]);
 $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -88,6 +91,9 @@ $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="recipe-notes">
                     <?php foreach ($notes as $note): ?>
                         <p><?= htmlspecialchars($note['description']) ?></p>
+                        <p>Gemaakt door: <?= htmlspecialchars($recipe['username'] ?? 'Onbekend') ?></p>
+                        <br>
+                        <h6><?= htmlspecialchars($recipe['Sterren']) ?></h6>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
