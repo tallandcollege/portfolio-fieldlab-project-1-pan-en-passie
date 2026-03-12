@@ -29,15 +29,25 @@ $fotopad = 'fotos/';
 </head>
 
 <body>
-    <?php include(__DIR__ . "/Includes/header.php"); ?>
-    <div class="docent-intro">
-        <h1>leraren panel</h1>
+    <?php include("Includes/header.php"); ?>
+    <div class="admin-intro">
+        <h1>Docenten Paneel</h1>
         <p>Welkom,
             <?php echo htmlspecialchars($_SESSION['name']); ?>!
         </p>
-        <?php if (isset($_GET['status']) && $_GET['status'] === 'ok'): ?>
-                <p class="ok">Recept succesvol bijgewerkt!</p>
-            <?php endif; ?>
+        <?php if (!empty($_SESSION['students_not_added'])): ?>
+            <div class="admin-notice">
+                <p>Deze studenten konden niet worden toegevoegd omdat de klas vol is:</p>
+                <?php foreach ($_SESSION['students_not_added'] as $student): ?>
+                    <p>
+                        <?= htmlspecialchars(($student['firstname'] ?? '') . ' ' . ($student['lastname'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                        (<?= htmlspecialchars($student['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>,
+                        <?= htmlspecialchars($student['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>)
+                    </p>
+                <?php endforeach; ?>
+            </div>
+            <?php unset($_SESSION['students_not_added']); ?>
+        <?php endif; ?>
     </div>
     <section class="docent-section">
         <article class="docent-panellist">
@@ -76,20 +86,10 @@ $fotopad = 'fotos/';
                 <?php endif; ?>
             </div>
         </article>
-        <article class="docent-panellist">
-            <h2>ingediende recepten</h2>
-            <div class="docent-panellist-content"></div>
-        </article>
-        <article class="docent-panellist">
-            <h2>Klass</h2>
-            <div class="docent-panellist-content"></div>
-        </article>
-
-
-
-
+       <?php include("Includes/AccountZoekWidget.php");
+        include("Includes/KlassenWidget.php"); ?>
     </section>
-    <?php include(__DIR__ . "/Includes/footer.php"); ?>
+    <?php include("Includes/footer.php"); ?>
 </body>
 
 

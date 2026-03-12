@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "/connection.php");
+require_once("connection.php");
 
 $klassen = [];
 
@@ -49,7 +49,7 @@ if (
     }
 
     // refresh zodat je direct de nieuwe lijst ziet en resubmit voorkomt
-    header("Location: adminpanel.php?klasid=" . $klasid);
+    header("Location: ?klasid=" . $klasid);
     exit;
 }
 
@@ -181,7 +181,7 @@ ORDER BY u.lastname, u.firstname;";
                             <p>Geen studenten gevonden in deze klas.</p>
                         </div>
                         <div class="AddStudent-btn-container">
-                                <a class="AddStudent-btn" href="adminpanel.php">Terug</a>
+                                <a class="AddStudent-btn" href="?">Terug</a>
                             </div>
                     <?php else: ?>
                         <form method="POST">
@@ -212,7 +212,7 @@ ORDER BY u.lastname, u.firstname;";
                             </table>
 
                             <div class="AddStudent-btn-container">
-                                <a class="AddStudent-btn" href="adminpanel.php">Terug</a>
+                                <a class="AddStudent-btn" href="?">Terug</a>
                                 <input class="AddStudent-btn" type="submit" value="Student verwijderen" name="Delete">
                             </div>
                         </form>
@@ -230,7 +230,7 @@ ORDER BY u.lastname, u.firstname;";
                     </div>
                 <?php else: ?>
                     <?php foreach ($klassen as $klas): ?>
-                        <a class="admin-list-item" href="adminpanel.php?klasid=<?= (int)$klas['id'] ?>">
+                        <a class="admin-list-item" href="?klasid=<?= (int)$klas['id'] ?>">
                             <div class="admin-list-item-main">
                                 <h3><?= htmlspecialchars(truncateText($klas['classname'] ?? '', 20), ENT_QUOTES, 'UTF-8') ?></h3>
                             </div>
