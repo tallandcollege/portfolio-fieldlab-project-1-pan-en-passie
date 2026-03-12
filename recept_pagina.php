@@ -8,9 +8,10 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 include_once(__DIR__ . "/Includes/connection.php");
 
 $recipe = fetchData("
-    SELECT id, name, description, instructions
-    FROM recipe
-    WHERE id = :recipe_id
+    SELECT r.id, r.name, r.description, r.instructions, r.Sterren, u.username
+    FROM recipe r
+    LEFT JOIN users u ON r.User_id = u.id
+    WHERE r.id = :recipe_id
 ", [':recipe_id' => $recipeid], true);
 
 if (empty($recipe)) {
@@ -88,6 +89,9 @@ $notes = fetchData("
                 <span>
                     <?php foreach ($notes as $note): ?>
                         <p><?= htmlspecialchars($note['description']) ?></p>
+                        <p>Gemaakt door: <?= htmlspecialchars($recipe['username'] ?? 'Onbekend') ?></p>
+                        <br>
+                        <h6><?= htmlspecialchars($recipe['Sterren']) ?></h6>
                     <?php endforeach; ?>
                 </span>
                 <span>
