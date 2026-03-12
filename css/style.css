@@ -134,67 +134,131 @@ header {
   height: auto;
 }
 
+.search-shell {
+  position: relative;
+  width: min(100%, 520px);
+}
+
+#searchForm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 15px;
+  background: white;
+  border: 1px solid rgba(0, 55, 61, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 12px 24px rgba(0, 55, 61, 0.08);
+  transition: border-radius 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-shell:focus-within #searchForm,
+.search-shell.is-open #searchForm {
+  border-color: rgba(0, 55, 61, 0.28);
+  box-shadow: 0 14px 28px rgba(0, 55, 61, 0.14);
+}
+
+.search-shell.is-open #searchForm {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.search-icon {
+  display: grid;
+  place-items: center;
+  color: var(--Talland-groen);
+  opacity: 0.75;
+}
+
+.search-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 #zoekvak {
-  width: 40%;
-  height: 50%;
-  padding: 8px;
-  font-size: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 0;
+  font-size: 14px;
   border: none;
-  border-radius: 10px;
-  background-color: var(--Background);
+  outline: none;
+  background: transparent;
+  color: var(--Talland-groen);
+}
+
+#zoekvak::placeholder {
+  color: rgba(0, 55, 61, 0.6);
 }
 
 #resultaten {
   position: absolute;
-  top: 7%;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 500px;
+  top: 100%;
+  left: 0;
   width: 100%;
-  max-height: 60vh;
+  max-height: min(60vh, 420px);
   overflow-y: auto;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 10px;
-  border-bottom: 3px solid var(--Talland-groen);
-  display: none;
+  background: #fff;
+  border: 1px solid rgba(0, 55, 61, 0.16);
+  border-top: none;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  box-shadow: 0 18px 34px rgba(0, 55, 61, 0.16);
+  z-index: 1000;
 }
 
-#zoekresultaten {
-  width: 100%;
-  height: 100%;
-  border: none;
+#resultaten[hidden] {
+  display: none;
 }
 
 /* Zoekresultaat cards */
 .kaart {
   display: flex;
-  gap: 10px;
-  padding: 8px;
-  border-bottom: 1px solid #eee;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 55, 61, 0.08);
   cursor: pointer;
   align-items: center;
+  transition: background-color 0.18s ease;
+}
+
+#resultaten a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+#resultaten a:last-child .kaart {
+  border-bottom: none;
+}
+
+#resultaten a:hover .kaart,
+#resultaten a:focus .kaart {
+  background-color: rgba(90, 170, 149, 0.12);
 }
 
 .kaart img {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
 .naam {
   font-weight: 600;
+  color: var(--Talland-groen);
 }
 
 .ingredienten {
   font-size: 13px;
-  color: #555;
+  color: #4d5e60;
+  margin-top: 3px;
 }
 
 .leeg {
-  color: #888;
-  padding: 8px;
+  color: #667879;
+  padding: 16px;
+  text-align: center;
 }
 
 /* =========================
@@ -567,34 +631,6 @@ footer p {
   }
 }
 
-.recipe-image {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-.list {
-  display: flex;
-  align-items: center;
-}
-
-.aantal {
-  width: 100px;
-}
-
-.eenheid {
-  width: 60px;
-  text-align: right;
-}
-
-.name {
-  flex: 1;
-  border-left: 1px solid #ccc;
-  padding-left: 15px;
-}
-
 @media (max-width: 720px) {
   .name {
     flex: 1;
@@ -610,34 +646,49 @@ footer p {
 }
 
 .left-column {
-  width: 42%;
+  width: 50%;
   font-size: 0.92rem;
 }
 
 .right-column {
-  width: 58%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+  min-height: 100vh;
+  gap: 20px;
   font-size: 0.92rem;
 }
 
-.ingredient,
-h2 {
-  font-size: 1.02rem;
+.right-column span {
+  width: 100%;
+}
+.right-column table {
+  width: 80%;
+  border-top: 3px solid var(--Talland-groen);
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.right-column td {
+  width: 33.33%;
+  padding: 10px;
+  text-align: center;
   font-weight: bold;
-  margin: 16px 0 8px 0;
-  padding-bottom: 4px;
-  color: #333;
 }
 
-.ingredients .ingredients,
+.right-column td:nth-child(2) {
+  width: 10% !important;
+  border-left: 3px solid var(--Talland-groen);
+  border-right: 3px solid var(--Talland-groen);
+}
+
 .materials {
-  padding-left: 18px;
-  margin-bottom: 20px;
-}
-
-.ingredients li,
-.materials li {
-  margin-bottom: 4px;
-  color: #555;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0px 0px 20px;
+  gap: 10px;
 }
 
 .steps {
@@ -1086,9 +1137,8 @@ img {
     display: none;
   }
 
-  #zoekvak {
-    width: 60%;
-    height: auto;
+  .search-shell {
+    width: 100%;
   }
 
   header {
@@ -1131,14 +1181,6 @@ img {
 .ingredient-item input,
 .ingredient-item select {
   width: 100%;
-}
-
-
-/* Remove list styling */
-#ingredienten {
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
 .addRecipe-section textarea,
