@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($userID)) {
             throw new Exception("user_id is required");
         }
-
+        //De Query die ervoor zorgt dat je recepten in de database kan toevoegen
         $queryRecipe = "
             INSERT INTO recipe 
             (user_id, name, description, instructions, createdat, Sterren)
@@ -77,9 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $recipeID = $pdo->lastInsertId();
 
-        /* ==========================
-           MATERIALEN VERWERKEN
-        ========================== */
+        /*MATERIALEN VERWERKEN*/
         if (!empty($_POST['materiaal'])) {
             $checkMaterialQuery = "SELECT id FROM material WHERE name = :name LIMIT 1";
             $insertMaterialQuery = "INSERT INTO material (name) VALUES (:name)";
@@ -88,14 +86,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $insertRecipeMaterialQuery = "INSERT INTO recipematerial (Recipe_id, material_id) VALUES (:recipe_id, :material_id)";
             $stmtRecipeMaterial = $pdo->prepare($insertRecipeMaterialQuery);
-
+            //Controleert ingevoerde materialen
             foreach ($_POST['materiaal'] as $materiaalName) {
                 $materiaalName = trim($materiaalName);
                 if (empty($materiaalName)) continue;
 
                 $stmtCheckMaterial->execute([':name' => $materiaalName]);
                 $materiaal = $stmtCheckMaterial->fetch(PDO::FETCH_ASSOC);
-
+                //als het materiaal nog niet in de database zit wordt deze nieuw toegevoegd
                 if (!$materiaal) {
                     $stmtInsertMaterial->execute([':name' => $materiaalName]);
                     $materiaalID = $pdo->lastInsertId();
@@ -110,9 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        /* ==========================
-           INGREDIËNTEN VERWERKEN
-        ========================== */
+        /*INGREDIËNTEN VERWERKEN*/
         if (!empty($_POST['ingredient_name'])) {
             $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
             $insertIngredientQuery = "INSERT INTO ingredient (name, categoryid) VALUES (:name, :cat_id)";
@@ -128,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $stmtCheckIngredient->execute([':name' => $ingredientName]);
                 $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
-
+                //Als een nieuw ingredient nieuw is, wordt deze nieuw opgeslagen onder categorie 18 (nieuw)
                 if (!$ingredient) {
                     $stmtInsertIngredient->execute([
                         ':name'   => $ingredientName,
@@ -151,9 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        /* ==========================
-           AANVULLINGEN VERWERKEN
-        ========================== */
+        /*AANVULLINGEN VERWERKEN*/
         if (!empty($_POST['aanvullingen'])) {
             $queryAanvulling = "
                 INSERT INTO aanvulling (Recipe_id, description)
@@ -166,9 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ]);
         }
 
-        /* ==========================
-            FOTO TOEVOEGEN (LONGBLOB)
-        ========================== */
+        /*FOTO TOEVOEGEN (LONGBLOB)*/
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $tmpName = $_FILES['photo']['tmp_name'];
             $originalName = $_FILES['photo']['name'];
