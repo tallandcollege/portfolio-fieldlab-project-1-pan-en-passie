@@ -29,13 +29,14 @@ body {
 }
 
 /* =========================
-   Common UI
+   Algemene UI / Formulieren
+   Label, focus states, knoppen en alerts
 ========================= */
 .form-label {
   font-weight: 600;
 }
 
-/* Inputs focus (bootstrap-ish) */
+/* Focusstijl voor inputs en selects */
 .form-control:focus,
 .form-select:focus,
 .input-group .form-control:focus {
@@ -83,7 +84,8 @@ body {
 }
 
 /* =========================
-   Login
+   Login sectie
+   Stijlen voor login-kaartje
 ========================= */
 .login {
   background-color: white;
@@ -91,7 +93,8 @@ body {
 }
 
 /* =========================
-   Registratie
+   Registratie sectie
+   Vormgeving registratie formulier
 ========================= */
 .registratie {
   background-color: #ffffff;
@@ -109,6 +112,7 @@ body {
 
 /* =========================
    Header + Zoekbalk
+   Navigatiebalk en zoekveld met resultaten
 ========================= */
 header {
   background-color: var(--UI);
@@ -193,6 +197,7 @@ header {
   color: rgba(0, 55, 61, 0.6);
 }
 
+/* Zoekresultaten dropdown */
 #resultaten {
   position: absolute;
   top: 100%;
@@ -213,7 +218,7 @@ header {
   display: none;
 }
 
-/* Zoekresultaat cards */
+/* Zoekresultaat kaartjes */
 .kaart {
   display: flex;
   gap: 12px;
@@ -763,6 +768,28 @@ footer p {
 /* =========================
    Admin Panel / doccent panel: recepten
 ========================= */
+.form-receptwijziging {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 8px 6px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.form-receptwijziging .ingredient-item {
+  display: flex;
+  margin-left: 16px;
+  justify-content: space-between;
+}
+
+.img-recept-edit {
+  margin: auto;
+  border-radius: 7px;
+}
+
 .recept-section {
   min-height: auto;
   max-width: 100%;
@@ -774,25 +801,52 @@ footer p {
 }
 
 .recept-panellijst {
-  width: 87%;
-  height: fit-content;
-  border-radius: 10px;
-  padding: 20px;
-  background-color: var(--UI);
-  color: white;
   text-align: center;
-  margin-left: 22px;
-  margin-right: 26px;
+  margin-bottom: 10px;
 }
 
-.recept-panellijst input,
-.recept-panellijst select,
+.recept-panellijst .green-button {
+  background-color: var(--UI);
+  color: white;
+  border: none;
+  padding: 10px 40px 10px 40px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+  font-weight: bold;
+}
+
+.recept-panellijst .ingredient-item td:nth-child(5) {
+  width: 8%;
+}
+
 .recept-panellijst textarea {
   margin-top: 10px;
   width: 100%;
   padding: 6px 8px;
   height: 3em;
   border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.recept-panellijst select {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  height: 3em;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.recept-panellijst input {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  height: 3em;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  outline: none;
+  border-color: var(--Talland-groen);
+  box-shadow: 0 0 5px rgba(90, 170, 149, 0.5);
 }
 
 
@@ -849,6 +903,12 @@ label {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
+}
+
+.img-recept {
+  max-width: 150px;
+  display: block;
+  margin: auto;
 }
 
 .recepten-title {
@@ -1045,7 +1105,7 @@ label {
   .addRecipe-section {
     padding: 0;
   }
-  
+
   .addRecipe-section form {
     padding: 5px;
   }
@@ -1062,7 +1122,8 @@ label {
     width: 10% !important;
   }
 
-  .ingredient-item td input, .ingredient-item td select {
+  .ingredient-item td input,
+  .ingredient-item td select {
     font-size: 12px;
     text-wrap: nowrap;
     height: auto;
@@ -1248,27 +1309,29 @@ textarea,
   }
 }
 
-.popup-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #333;
-  color: #fff;
-  padding: 20px 30px;
-  border-radius: 10px;
-  font-size: 16px;
-  display: none;
-  z-index: 9999;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+.addRecipe-section input,
+select {
+  margin-bottom: 10px;
 }
 
-.popup-message.success {
-  background-color: #4CAF50;
-}
+/* INGREDIENT ROW LAYOUT */
+.ingredient-item {
+  display: grid;
+  grid-template-columns:
+    120px
+    /* naar smaak */
+    90px
+    /* amount */
+    80px
+    /* unit */
+    1fr
+    /* naam */
+    40px;
+  /* X */
 
-.popup-message.error {
-  background-color: #f44336;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .Add_Recipe_ingredienten {
@@ -1293,15 +1356,19 @@ textarea,
 .table-header th:nth-child(1) {
   width: 15%;
 }
+
 .table-header th:nth-child(2) {
   width: 20%;
 }
+
 .table-header th:nth-child(3) {
   width: 15%;
 }
+
 .table-header th:nth-child(4) {
   width: 40%;
 }
+
 .table-header th:nth-child(5) {
   width: 20%;
 }
@@ -1310,11 +1377,25 @@ textarea,
   text-align: center;
 }
 
-.ingredient-item td:nth-child(1) { width: 15%; }
-.ingredient-item td:nth-child(2) { width: 20%; }
-.ingredient-item td:nth-child(3) { width: 15%; }
-.ingredient-item td:nth-child(4) { width: 40%; }
-.ingredient-item td:nth-child(5) { width: 20%; }
+.ingredient-item td:nth-child(1) {
+  width: 15%;
+}
+
+.ingredient-item td:nth-child(2) {
+  width: 20%;
+}
+
+.ingredient-item td:nth-child(3) {
+  width: 15%;
+}
+
+.ingredient-item td:nth-child(4) {
+  width: 40%;
+}
+
+.ingredient-item td:nth-child(5) {
+  width: 20%;
+}
 
 
 
@@ -1322,7 +1403,7 @@ textarea,
 /* Make inputs fill their grid cell */
 .ingredient-item td input,
 .ingredient-item td select {
-   margin: 5px;
+  margin: 5px;
 }
 
 .addRecipe-section textarea,
@@ -1334,7 +1415,8 @@ textarea,
   width: 100%;
 }
 
-.instruction-item, .materiaal-item {
+.instruction-item,
+.materiaal-item {
   display: flex;
   width: auto;
   gap: 10px;
