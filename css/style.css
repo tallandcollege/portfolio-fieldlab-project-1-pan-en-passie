@@ -805,6 +805,18 @@ footer p {
   margin-bottom: 10px;
 }
 
+.recept-panellijst .table-header th:nth-child(1) {
+  width: 26%;
+}
+
+.recept-panellijst .table-header th:nth-child(2) {
+  width: 26%;
+}
+
+.recept-panellijst .table-header th:nth-child(3) {
+  width: 26%;
+}
+
 .recept-panellijst .green-button {
   background-color: var(--UI);
   color: white;

@@ -202,7 +202,6 @@ if (empty($instructionLines)) {
                             <th>Ingrediënt</th>
                             <th>Aantal</th>
                             <th>Eenheid</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="ingredienten">
