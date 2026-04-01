@@ -49,7 +49,10 @@ $pdo = connect();
                         echo "<a href='recept_pagina.php?id=" . $rec['id'] . "'>";
                         echo "<h2>" . htmlspecialchars($rec['Name']) . "</h2>";
                         echo "<div class='receptendetails'>" . htmlspecialchars($rec['Description']) . "</div>";
-                        echo "<h5 class='receptentijd'>" . $rec['Createdat'] . " " . $rec['Sterren'] . "</h5>";
+                        echo "<h5 class='receptentijd'>"
+                            . date("d-m-Y", strtotime($rec['Createdat']))
+                            . " " . $rec['Sterren']
+                            . "</h5>";
                         echo "<h6 class='receptentijd'>" . htmlspecialchars($rec['username']) . "</h6>";
                         echo "</a>";
                         echo "</div>";
