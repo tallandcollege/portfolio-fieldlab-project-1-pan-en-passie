@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . "/Includes/connection.php";
+include_once "Includes/connection.php";
 
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");

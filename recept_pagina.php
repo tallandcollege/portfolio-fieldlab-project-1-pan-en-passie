@@ -110,11 +110,24 @@ $notes = fetchData("
                 <span>
                     <table>
                         <h2>Ingredienten</h2>
+
                         <?php foreach ($ingredient as $ing): ?>
                             <tr>
-                                <td><?= htmlspecialchars($ing['Aantal']) ?></td>
-                                <td><?= htmlspecialchars($ing['Eenheid']) ?></td>
-                                <td><?= htmlspecialchars($ing['name']) ?></td>
+                                <?php 
+                                if (empty($ing['Aantal'])) {
+                                    $ingredientAantal = 'Naar smaak';
+                                    $ingredientEenheid = '*';
+                                } else {
+                                $ingredientAantal = $ing['Aantal'] ?? '';
+                                $ingredientEenheid = $ing['Eenheid'] ?? '';
+                                }
+                                $ingredientNaam = $ing['name'] ?? '';
+                                ?>
+                                    
+
+                                <td><?= htmlspecialchars($ingredientAantal) ?></td>
+                                <td><?= htmlspecialchars($ingredientEenheid) ?></td>
+                                <td><?= htmlspecialchars($ingredientNaam) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tr>
