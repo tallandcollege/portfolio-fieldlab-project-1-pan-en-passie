@@ -38,7 +38,7 @@ if (isset($_GET['term'])) {
             LIMIT 1
         )
         WHERE r.name LIKE :term
-        GROUP BY r.id, r.name, p.image, p.mime_type, p.filename
+        GROUP BY r.id
         LIMIT 10
     ");
     $stmt->execute(['term' => $like]);
