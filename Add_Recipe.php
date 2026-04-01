@@ -332,7 +332,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label class="form-label">Notities</label>
                 <textarea name="aanvullingen" class="aanvullingen"></textarea>
 
-                <label>Upload foto:</label>
+                <label>Upload foto: (max: 16 MB)</label>
                 <input type="file" name="photo" accept="image/*" required>
 
                 <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'] ?? 1; ?>">

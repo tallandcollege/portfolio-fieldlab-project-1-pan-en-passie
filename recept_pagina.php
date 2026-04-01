@@ -112,7 +112,23 @@ $notes = fetchData("
                         <h2>Ingredienten</h2>
                         <?php foreach ($ingredient as $ing): ?>
                             <tr>
-                                <td><?= htmlspecialchars($ing['Aantal']) ?></td>
+                                <td>
+                                    <?php
+                                    $aantal = $ing['Aantal'];
+
+                                    if (is_numeric($aantal)) {
+                                        // Max 2 decimalen, komma als scheidingsteken
+                                        $formatted = number_format($aantal, 2, ',', '');
+
+                                        // Verwijder overbodige nullen (bijv. ,00 of ,50 → ,5)
+                                        $formatted = rtrim(rtrim($formatted, '0'), ',');
+
+                                        echo htmlspecialchars($formatted);
+                                    } else {
+                                        echo htmlspecialchars($aantal);
+                                    }
+                                    ?>
+                                </td>
                                 <td><?= htmlspecialchars($ing['Eenheid']) ?></td>
                                 <td><?= htmlspecialchars($ing['name']) ?></td>
                             </tr>
