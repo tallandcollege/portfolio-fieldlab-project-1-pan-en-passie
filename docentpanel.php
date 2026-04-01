@@ -9,23 +9,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'docent') {
 // Haal alle recepten en de nieuwste receptfoto op
 $recipes = fetchData("
     SELECT r.id,
-           r.name AS naam,
-           GROUP_CONCAT(i.Name SEPARATOR ', ') AS ingredienten,
-           p.filename AS foto_bestand,
-           p.image AS foto_blob,
-           p.mime_type
-    FROM recipe r
-    LEFT JOIN recipeingredient ri ON r.id = ri.recipe_id
-    LEFT JOIN ingredient i ON ri.ingredient_id = i.id
-    LEFT JOIN photo p ON p.id = (
-        SELECT p2.id
-        FROM photo p2
-        WHERE p2.recipe_id = r.id
-        ORDER BY p2.uploaded_at DESC, p2.id DESC
-        LIMIT 1
-    )
-    GROUP BY r.id, p.filename, p.image, p.mime_type
-    ORDER BY r.name ASC
+       r.name AS naam,
+       GROUP_CONCAT(DISTINCT i.name SEPARATOR ', ') AS ingredienten,
+       p.filename AS foto_bestand,
+       p.image AS foto_blob,
+       p.mime_type
+FROM recipe r
+LEFT JOIN recipeingredient ri ON r.id = ri.recipe_id
+LEFT JOIN ingredient i ON ri.ingredient_id = i.id
+LEFT JOIN photo p ON p.id = (
+    SELECT p2.id
+    FROM photo p2
+    WHERE p2.recipe_id = r.id
+    ORDER BY p2.uploaded_at DESC, p2.id DESC
+    LIMIT 1
+)
+GROUP BY r.id
+ORDER BY r.id DESC;
 ");
 
 
@@ -63,7 +63,7 @@ $recipes = fetchData("
     </div>
     <section class="docent-section">
         <article class="docent-panellist">
-            <h2>recepten</h2>
+            <h2>Recepten</h2>
             <div id="recepten-wrapper">
                 <?php if (empty($recipes)): ?>
                     <p class="recepten-no-results">Geen recepten gevonden.</p>

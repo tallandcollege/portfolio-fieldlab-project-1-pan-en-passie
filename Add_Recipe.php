@@ -113,8 +113,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         /* ==========================
-           INGREDIËNTEN VERWERKEN
-        ========================== */
+   INGREDIËNTEN VERWERKEN
+========================== */
         if (!empty($_POST['ingredient_name'])) {
             $checkIngredientQuery = "SELECT id FROM ingredient WHERE name = :name LIMIT 1";
             $insertIngredientQuery = "INSERT INTO ingredient (name, categoryid) VALUES (:name, :cat_id)";
@@ -122,19 +122,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmtInsertIngredient = $pdo->prepare($insertIngredientQuery);
 
             $queryRecipeIngredient = "
-                INSERT INTO recipeingredient 
-                (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) 
-                VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)
-            ";
+        INSERT INTO recipeingredient 
+        (recipe_id, ingredient_id, Aantal, Eenheid, IngredientRole) 
+        VALUES (:rec_id, :ing_id, :aantal, :eenheid, :role)
+    ";
             $stmtRecipeIngredient = $pdo->prepare($queryRecipeIngredient);
 
             foreach ($_POST['ingredient_name'] as $index => $ingredientName) {
                 $ingredientName = trim($ingredientName);
-                if (empty($ingredientName)) {
+
+                if ($ingredientName === '') {
                     continue;
                 }
 
-                $stmtCheckIngredient->execute([':name' => $ingredientName]);
+                $stmtCheckIngredient->execute([
+                    ':name' => $ingredientName
+                ]);
                 $ingredient = $stmtCheckIngredient->fetch(PDO::FETCH_ASSOC);
 
                 if (!$ingredient) {
@@ -147,14 +150,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $ingredientID = $ingredient['id'];
                 }
 
-                $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '') === 'on';
+                $naarSmaak = ($_POST['ingredient_naarsmaak'][$index] ?? '0') === '1';
+
+                $aantal = $_POST['ingredient_amount'][$index] ?? null;
+                $eenheid = $_POST['ingredient_unit'][$index] ?? null;
+
+                if ($naarSmaak) {
+                    $aantal = null;
+                    $eenheid = null;
+                    $role = 'naarsmaak';
+                } else {
+                    $aantal = ($aantal === '') ? null : $aantal;
+                    $eenheid = ($eenheid === '') ? null : $eenheid;
+                    $role = 'standaard';
+                }
 
                 $stmtRecipeIngredient->execute([
                     ':rec_id'   => $recipeID,
                     ':ing_id'   => $ingredientID,
-                    ':aantal'   => $naarSmaak ? null : ($_POST['ingredient_amount'][$index] ?? null),
-                    ':eenheid'  => $naarSmaak ? '*' : ($_POST['ingredient_unit'][$index] ?? null),
-                    ':role'     => $naarSmaak ? 'naarsmaak' : ($_POST['ingredient_role'][$index] ?? 'standaard')
+                    ':aantal'   => $aantal,
+                    ':eenheid'  => $eenheid,
+                    ':role'     => $role
                 ]);
             }
         }
@@ -213,10 +229,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pdo->commit();
 
         echo "<script>
-            showPopup('Recept succesvol opgeslagen!', 'success');
-            setTimeout(function () {
-                window.location.href = 'recept_pagina.php?id=" . $recipeID . "';
-            }, 2000);
+            window.addEventListener('load', function () {
+                if (typeof showPopup === 'function') {
+                    showPopup('Recept succesvol opgeslagen!', 'success');
+                } else {
+                    alert('Recept succesvol opgeslagen!');
+                }
+
+                setTimeout(function () {
+                    window.location.href = 'recepten.php?search=' + encodeURIComponent('" . addslashes($_POST['namerecipe']) . "');
+                }, 2000);
+            });
         </script>";
     } catch (Exception $e) {
         if ($pdo->inTransaction()) {
@@ -239,12 +262,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recept toevoegen</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <?php include("includes/header.php"); ?>
 
@@ -288,15 +313,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </tr>
                     </thead>
                     <tbody id="ingredienten">
-                        <tr class="ingredient-item">
+                        <tr class="ingredient-item" data-index="0">
                             <td>
-                                <input type="checkbox" name="ingredient_naarsmaak[]" onchange="toggleAmount(this)">
+                                <input type="hidden" name="ingredient_naarsmaak[0]" value="0">
+                                <input type="checkbox" value="1" onchange="toggleAmount(this)">
                             </td>
                             <td>
-                                <input name="ingredient_amount[]" type="number" step="any" placeholder="Aantal">
+                                <input name="ingredient_amount[0]" type="number" step="any" placeholder="Aantal">
                             </td>
                             <td>
-                                <select name="ingredient_unit[]">
+                                <select name="ingredient_unit[0]">
+                                    <option value="">Kies eenheid</option>
                                     <option value="st">Stuks</option>
                                     <option value="tl">Tl</option>
                                     <option value="el">El</option>
@@ -310,7 +337,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 </select>
                             </td>
                             <td>
-                                <input class="ingredient_name" name="ingredient_name[]" placeholder="Ingrediënt">
+                                <input class="ingredient_name" name="ingredient_name[0]" placeholder="Ingrediënt">
                             </td>
                             <td></td>
                         </tr>
@@ -356,41 +383,47 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }, 3000);
         }
 
+        let ingredientIndex = 1;
+
         function addIngredient() {
             const tbody = document.getElementById("ingredienten");
             const tr = document.createElement("tr");
             tr.className = "ingredient-item";
+            tr.setAttribute("data-index", ingredientIndex);
 
             tr.innerHTML = `
-                <td>
-                    <input type="checkbox" name="ingredient_naarsmaak[]" onchange="toggleAmount(this)">
-                </td>
-                <td>
-                    <input name="ingredient_amount[]" type="number" step="any" placeholder="Aantal">
-                </td>
-                <td>
-                    <select name="ingredient_unit[]">
-                        <option value="st">Stuks</option>
-                        <option value="tl">Tl</option>
-                        <option value="el">El</option>
-                        <option value="bs">Bosje</option>
-                        <option value="g">G</option>
-                        <option value="kg">KG</option>
-                        <option value="ml">ML</option>
-                        <option value="dl">DL</option>
-                        <option value="l">L</option>
-                        <option value="fles">Fles</option>
-                    </select>
-                </td>
-                <td>
-                    <input name="ingredient_name[]" placeholder="Ingrediënt">
-                </td>
-                <td>
-                    <button type="button" onclick="removeItem(this)">❌</button>
-                </td>
-            `;
+        <td>
+            <input type="hidden" name="ingredient_naarsmaak[${ingredientIndex}]" value="0">
+            <input type="checkbox" value="1" onchange="toggleAmount(this)">
+        </td>
+        <td>
+            <input name="ingredient_amount[${ingredientIndex}]" type="number" step="any" placeholder="Aantal">
+        </td>
+        <td>
+            <select name="ingredient_unit[${ingredientIndex}]">
+                <option value="">Kies eenheid</option>
+                <option value="st">Stuks</option>
+                <option value="tl">Tl</option>
+                <option value="el">El</option>
+                <option value="bs">Bosje</option>
+                <option value="g">G</option>
+                <option value="kg">KG</option>
+                <option value="ml">ML</option>
+                <option value="dl">DL</option>
+                <option value="l">L</option>
+                <option value="fles">Fles</option>
+            </select>
+        </td>
+        <td>
+            <input name="ingredient_name[${ingredientIndex}]" placeholder="Ingrediënt">
+        </td>
+        <td>
+            <button type="button" onclick="removeItem(this)">❌</button>
+        </td>
+    `;
 
             tbody.appendChild(tr);
+            ingredientIndex++;
         }
 
         function addInstruction() {
@@ -454,27 +487,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             const row = checkbox.closest("tr");
             if (!row) return;
 
-            const amountInput = row.querySelector('input[name="ingredient_amount[]"]');
-            const eenheidSelect = row.querySelector('select[name="ingredient_unit[]"]');
-            if (!amountInput) return;
+            const hiddenNaarsmaak = row.querySelector('input[type="hidden"][name^="ingredient_naarsmaak["]');
+            const amountInput = row.querySelector('input[name^="ingredient_amount["]');
+            const eenheidSelect = row.querySelector('select[name^="ingredient_unit["]');
+
+            if (!hiddenNaarsmaak || !amountInput || !eenheidSelect) return;
 
             if (checkbox.checked) {
+                hiddenNaarsmaak.value = "1";
                 amountInput.value = "";
-                amountInput.disabled = true;
                 eenheidSelect.value = "";
-                eenheidSelect.disabled = true;
+
+                amountInput.style.opacity = "0.5";
+                eenheidSelect.style.opacity = "0.5";
+                amountInput.style.pointerEvents = "none";
+                eenheidSelect.style.pointerEvents = "none";
             } else {
-                amountInput.disabled = false;
-                eenheidSelect.disabled = false;
-                eenheidSelect.value = "st";
+                hiddenNaarsmaak.value = "0";
+
+                amountInput.style.opacity = "1";
+                eenheidSelect.style.opacity = "1";
+                amountInput.style.pointerEvents = "auto";
+                eenheidSelect.style.pointerEvents = "auto";
             }
         }
 
         document.querySelectorAll('input[name="ingredient_naarsmaak[]"]').forEach(cb => {
-            cb.addEventListener("change", function () {
+            cb.addEventListener("change", function() {
                 toggleAmount(this);
             });
         });
     </script>
 </body>
+
 </html>
