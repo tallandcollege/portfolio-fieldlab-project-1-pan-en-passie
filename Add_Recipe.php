@@ -1,5 +1,7 @@
 <?php
+// creeert connectie
 include_once("includes/connection.php");
+//pakt de maker van het recept
 $data = fetchData("SELECT * FROM users WHERE role_id = :role", [':role' => 2]);
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     error_log("DEBUG: POST received");
