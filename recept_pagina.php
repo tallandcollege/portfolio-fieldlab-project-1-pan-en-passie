@@ -114,11 +114,20 @@ $notes = fetchData("
                         <?php foreach ($ingredient as $ing): ?>
                             <tr>
                                 <?php 
+
                                 if (empty($ing['Aantal'])) {
                                     $ingredientAantal = 'Naar smaak';
                                     $ingredientEenheid = '*';
                                 } else {
-                                $ingredientAantal = $ing['Aantal'] ?? '';
+                                    if (is_numeric($ing['Aantal'])) {
+                                        // Max 2 decimalen, komma als scheidingsteken
+                                        $formatted = number_format($ing['Aantal'], 2, ',', '');
+
+                                        // Verwijder overbodige nullen (bijv. ,00 of ,50 → ,5)
+                                        $formatted = rtrim(rtrim($formatted, '0'), ',');
+                                        
+                                    }
+                                $ingredientAantal = $formatted ?? '';
                                 $ingredientEenheid = $ing['Eenheid'] ?? '';
                                 }
                                 $ingredientNaam = $ing['name'] ?? '';
