@@ -1,34 +1,47 @@
 <?php
 require_once("connection.php");
 
+// Container voor data (kan klassen OF studenten bevatten afhankelijk van view)
 $klassen = [];
 
+/**
+ * Kort lange tekst af voor UI
+ */
 function truncateText(string $text, int $maxLen): string
 {
-    if (strlen($text) <= $maxLen) {
-        return $text;
-    }
+    if (strlen($text) <= $maxLen) return $text;
     return substr($text, 0, $maxLen - 1) . "…";
 }
 
-// ===== DELETE STUDENTS FROM CLASS =====
+
+/* ===============================
+   DELETE STUDENTS FROM CLASS
+   =============================== */
+
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['Delete'])
     && isset($_GET['klasid'])
 ) {
+    // Huidige klas
     $klasid = (int)$_GET['klasid'];
 
-    // checkbox values
+    // Checkbox values (user_id's)
     $userIds = $_POST['delete_users'] ?? [];
 
+    // Safety
     if (!is_array($userIds)) $userIds = [];
 
-    // alleen geldige ints
-    $userIds = array_values(array_filter(array_map('intval', $userIds), fn($v) => $v > 0));
+    // Filter: alleen geldige ints > 0
+    $userIds = array_values(
+        array_filter(
+            array_map('intval', $userIds),
+            fn($v) => $v > 0
+        )
+    );
 
     if (!empty($userIds)) {
-        // maak dynamische placeholders voor IN (...)
+        // Dynamische IN (...) placeholders maken
         $placeholders = [];
         $params = [':klasid' => $klasid];
 
@@ -38,39 +51,47 @@ if (
             $params[$ph] = $uid;
         }
 
+        // Verwijdert student uit klas (niet uit Users!)
         $sql = "
             DELETE FROM Student
             WHERE class_id = :klasid
               AND user_id IN (" . implode(',', $placeholders) . ")
         ";
 
-        // $conn komt uit Includes/connection.php (PDO)
         executeQuery($sql, $params);
     }
 
-    // refresh zodat je direct de nieuwe lijst ziet en resubmit voorkomt
+    // Refresh (voorkomt form resubmit)
     header("Location: ?klasid=" . $klasid);
     exit;
 }
 
+
+/* ===============================
+   BASE QUERY (alle klassen)
+   =============================== */
+
 $baseQuery = "
     SELECT
-  id,
-  classname,
-  description,
-  maxstudents,
-  createdat,
-  createrecipeperms
-FROM Class
+        id,
+        classname,
+        description,
+        maxstudents,
+        createdat,
+        createrecipeperms
+    FROM Class
 ";
 
 
+/* ===============================
+   BEPAAL VIEW / ACTIE
+   =============================== */
+
 $actions = [
-    'klas'   => isset($_GET['klasid']),
+    'klas'   => isset($_GET['klasid']), // detail view
     'search' => ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['klassearch'])),
 ];
 
-// bepaal actie
 $action = 'default';
 
 if ($actions['klas']) {
@@ -79,55 +100,63 @@ if ($actions['klas']) {
     $action = 'search';
 }
 
+
+/* ===============================
+   DATA OPHALEN
+   =============================== */
+
 switch ($action) {
+
     case 'search':
         $search = trim($_POST['klassearch'] ?? '');
 
-        // als leeg: fall back naar default
+        // Geen zoekterm → default
         if ($search === '') {
-            $query = $baseQuery . " ORDER BY id DESC";
-            $klassen = fetchData($query);
+            $klassen = fetchData($baseQuery . " ORDER BY id DESC");
             break;
         }
 
+        // Zoek op id of classname
         $query = $baseQuery . "
             WHERE
-            CAST(id AS CHAR) LIKE CONCAT('%', :search, '%')
-            OR classname     LIKE CONCAT('%', :search, '%')
-            ORDER BY id DESC;
+                CAST(id AS CHAR) LIKE :search
+                OR classname LIKE :search
+            ORDER BY id DESC
         ";
 
         $klassen = fetchData($query, [':search' => "%{$search}%"]);
         break;
 
-    case 'klas':
 
+    case 'klas':
+        // Detail: studenten in 1 klas
         $klasid = $_GET['klasid'];
 
-        $query = "SELECT
-  s.user_id,
-  u.firstname,
-  u.lastname,
-  u.username,
-  u.email,
-  c.id   AS class_id,
-  c.classname,
-  r.name AS role_name
-FROM Student s
-JOIN Users u ON u.id = s.user_id
-JOIN Class c ON c.id = s.class_id
-JOIN Role  r ON r.id = s.role_id
-WHERE s.class_id = :klasid          
-ORDER BY u.lastname, u.firstname;";
+        $query = "
+            SELECT
+                s.user_id,
+                u.firstname,
+                u.lastname,
+                u.username,
+                u.email,
+                c.id   AS class_id,
+                c.classname,
+                r.name AS role_name
+            FROM Student s
+            JOIN Users u ON u.id = s.user_id
+            JOIN Class c ON c.id = s.class_id
+            JOIN Role  r ON r.id = s.role_id
+            WHERE s.class_id = :klasid
+            ORDER BY u.lastname, u.firstname
+        ";
 
         $klassen = fetchData($query, [':klasid' => $klasid]);
         break;
 
 
-
     default:
-        $query = $baseQuery . " ORDER BY id DESC";
-        $klassen = fetchData($query);
+        // Default: alle klassen
+        $klassen = fetchData($baseQuery . " ORDER BY id DESC");
         break;
 }
 ?>
@@ -137,7 +166,7 @@ ORDER BY u.lastname, u.firstname;";
 
     <div class="admin-article-content">
 
-
+        <!-- Zoekveld -->
         <form method="POST" class="admin-search-form">
             <input
                 type="text"
@@ -153,37 +182,47 @@ ORDER BY u.lastname, u.firstname;";
             <?php if ($action === 'klas'): ?>
 
                 <?php
-                // In 'klas'-mode bevat $klassen student-rijen.
+                // In deze view = studentenlijst
                 $students = $klassen;
 
-                // Probeer klasnaam uit eerste rij te halen; fallback: losse class-info ophalen als er 0 students zijn.
+                // Haal klas info uit eerste student of fallback query
                 $classInfo = null;
+
                 if (!empty($students)) {
                     $classInfo = [
-                        'id' => $students[0]['class_id'] ?? ($_GET['klasid'] ?? ''),
-                        'classname' => $students[0]['classname'] ?? ('Klas #' . ($_GET['klasid'] ?? '')),
+                        'id' => $students[0]['class_id'],
+                        'classname' => $students[0]['classname']
                     ];
                 } else {
-                    $q = $baseQuery . " WHERE id = :klasid LIMIT 1";
-                    $tmp = fetchData($q, [':klasid' => $_GET['klasid']]);
-                    if (!empty($tmp)) $classInfo = $tmp[0];
-                    else $classInfo = ['id' => $_GET['klasid'], 'classname' => 'Onbekende klas'];
+                    // Als geen studenten → klas alsnog ophalen
+                    $tmp = fetchData($baseQuery . " WHERE id = :klasid LIMIT 1", [
+                        ':klasid' => $_GET['klasid']
+                    ]);
+
+                    $classInfo = $tmp[0] ?? [
+                        'id' => $_GET['klasid'],
+                        'classname' => 'Onbekende klas'
+                    ];
                 }
                 ?>
 
-                <!-- 3) DETAIL: 1 KLAS + USERS -->
+                <!-- DETAIL VIEW -->
                 <div class="class-detail">
-                    <h3><?= htmlspecialchars($classInfo['classname'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <h3><?= htmlspecialchars($classInfo['classname']) ?></h3>
                     <p class="muted">Klas-ID: <?= (int)$classInfo['id'] ?></p>
 
                     <?php if (empty($students)): ?>
                         <div class="User-Search-item">
                             <p>Geen studenten gevonden in deze klas.</p>
                         </div>
+
                         <div class="AddStudent-btn-container">
-                                <a class="AddStudent-btn" href="?">Terug</a>
-                            </div>
+                            <a class="AddStudent-btn" href="?">Terug</a>
+                        </div>
+
                     <?php else: ?>
+
+                        <!-- Delete form -->
                         <form method="POST">
                             <table class="admin-table">
                                 <thead>
@@ -199,13 +238,12 @@ ORDER BY u.lastname, u.firstname;";
                                     <?php foreach ($students as $st): ?>
                                         <tr>
                                             <td>
-                                                <!-- Als je delete per student wil: geef user_id mee -->
                                                 <input type="checkbox" name="delete_users[]" value="<?= (int)$st['user_id'] ?>">
                                             </td>
-                                            <td><?= htmlspecialchars(truncateText(($st['lastname'] ?? '') . ', ' . ($st['firstname'] ?? ''), 50), ENT_QUOTES, 'UTF-8') ?></td>
-                                            <td><?= htmlspecialchars($st['username'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                            <td><?= htmlspecialchars($st['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                            <td><?= htmlspecialchars($st['role_name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars(truncateText($st['lastname'] . ', ' . $st['firstname'], 50)) ?></td>
+                                            <td><?= htmlspecialchars($st['username']) ?></td>
+                                            <td><?= htmlspecialchars($st['email']) ?></td>
+                                            <td><?= htmlspecialchars($st['role_name']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -216,14 +254,13 @@ ORDER BY u.lastname, u.firstname;";
                                 <input class="AddStudent-btn" type="submit" value="Student verwijderen" name="Delete">
                             </div>
                         </form>
+
                     <?php endif; ?>
                 </div>
 
-
             <?php else: ?>
 
-                <!-- 1) DEFAULT: nieuwste klassen (ORDER BY id DESC)
-             2) SEARCH: resultaten obv zoekterm -->
+                <!-- LIST VIEW (default + search) -->
                 <?php if (empty($klassen)): ?>
                     <div class="User-Search-item">
                         <p>Geen klassen gevonden!</p>
@@ -232,14 +269,14 @@ ORDER BY u.lastname, u.firstname;";
                     <?php foreach ($klassen as $klas): ?>
                         <a class="admin-list-item" href="?klasid=<?= (int)$klas['id'] ?>">
                             <div class="admin-list-item-main">
-                                <h3><?= htmlspecialchars(truncateText($klas['classname'] ?? '', 20), ENT_QUOTES, 'UTF-8') ?></h3>
+                                <h3><?= htmlspecialchars(truncateText($klas['classname'], 20)) ?></h3>
                             </div>
 
                             <div class="admin-list-item-meta">
-                                <span>Max: <?= (int)($klas['maxstudents'] ?? 0) ?></span>
-                                <span>ID: <?= (int)($klas['id'] ?? 0) ?></span>
+                                <span>Max: <?= (int)$klas['maxstudents'] ?></span>
+                                <span>ID: <?= (int)$klas['id'] ?></span>
                                 <?php if (!empty($klas['createdat'])): ?>
-                                    <span><?= htmlspecialchars($klas['createdat'], ENT_QUOTES, 'UTF-8') ?></span>
+                                    <span><?= htmlspecialchars($klas['createdat']) ?></span>
                                 <?php endif; ?>
                             </div>
                         </a>
@@ -251,6 +288,7 @@ ORDER BY u.lastname, u.firstname;";
 
     </div>
 
+    <!-- Alleen tonen in overzicht -->
     <?php if (!isset($_GET['klasid'])): ?>
         <a class="admin-btn" href="klasToevoegen.php">Maak een klas</a>
     <?php endif; ?>

@@ -1,3 +1,4 @@
+<!-- Footer included on every page of the site -->
 <footer>
     <div class="talland-logo">
             <img src="images\Placeholder Talland logo.png" alt="Talland Logo">
